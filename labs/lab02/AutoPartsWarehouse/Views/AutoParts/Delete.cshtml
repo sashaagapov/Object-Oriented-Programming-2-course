@@ -1,0 +1,19 @@
+@model AutoPartsWarehouse.Models.AutoPart
+
+<h1>Видалення запчастини</h1>
+
+<p>Ви дійсно хочете видалити цю запчастину?</p>
+
+<div>
+    <p><strong>Назва:</strong> @Model.Name</p>
+    <p><strong>Виробник:</strong> @Model.Manufacturer</p>
+    <p><strong>Кількість:</strong> @Model.QuantityInStock</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit">Видалити</button>
+</form>
+
+<a asp-action="Index">Скасувати</a>

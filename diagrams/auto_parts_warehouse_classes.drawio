@@ -1,0 +1,213 @@
+<mxfile host="Electron" agent="Codex">
+  <diagram id="auto-parts-warehouse-classes" name="UML класи">
+    <mxGraphModel dx="1625" dy="1073" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1500" pageHeight="1020" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#000000;" value="Діаграма класів системи «Склад запчастин для авто»" vertex="1">
+          <mxGeometry height="40" width="1050" x="220" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="supplier" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="Постачальник" vertex="1">
+          <mxGeometry height="125" width="300" x="41" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="supplier-attrs" parent="supplier" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="кодПостачальника: int&lt;br&gt;назва: string&lt;br&gt;телефон: string" vertex="1">
+          <mxGeometry height="67" width="300" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="supplier-ops" parent="supplier" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="30" width="300" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="warehouse" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="Склад" vertex="1">
+          <mxGeometry height="220" width="340" x="420" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="warehouse-attrs" parent="warehouse" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="назва: string&lt;br&gt;адреса: string" vertex="1">
+          <mxGeometry height="54" width="340" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="warehouse-ops" parent="warehouse" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="ЗнайтиЗапчастину(критерій: string): Запчастина&lt;br&gt;ПеревіритиЗалишки(): List&lt;Запчастина&gt;&lt;br&gt;ВидатиЗапчастину(запчастина: Запчастина,&lt;br&gt;кількість: int): bool&lt;br&gt;ЗареєструватиПоставку(замовлення: Замовлення): void" vertex="1">
+          <mxGeometry height="138" width="340" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="order" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="Замовлення" vertex="1">
+          <mxGeometry height="180" width="300" x="989" y="362" as="geometry" />
+        </mxCell>
+        <mxCell id="order-attrs" parent="order" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="номерЗамовлення: int&lt;br&gt;дата: DateTime&lt;br&gt;кількість: int&lt;br&gt;статус: string" vertex="1">
+          <mxGeometry height="92" width="300" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="order-ops" parent="order" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="ПозначитиЯкОтримане(): void" vertex="1">
+          <mxGeometry height="60" width="300" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="employee" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="Працівник {abstract}" vertex="1">
+          <mxGeometry height="112" width="300" x="1415" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="employee-attrs" parent="employee" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="табельнийНомер: int&lt;br&gt;ПІБ: string" vertex="1">
+          <mxGeometry height="54" width="300" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="employee-ops" parent="employee" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="30" width="300" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="part" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="Запчастина" vertex="1">
+          <mxGeometry height="200" width="350" x="426" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="part-attrs" parent="part" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="кодЗапчастини: int&lt;br&gt;назва: string&lt;br&gt;виробник: string&lt;br&gt;кількістьНаСкладі: int&lt;br&gt;мінімальнийЗалишок: int" vertex="1">
+          <mxGeometry height="112" width="350" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="part-ops" parent="part" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="ПеревіритиСумісність(&lt;br&gt;модель: МодельАвто): bool" vertex="1">
+          <mxGeometry height="60" width="350" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="car-model" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="МодельАвто" vertex="1">
+          <mxGeometry height="125" width="300" x="76" y="835" as="geometry" />
+        </mxCell>
+        <mxCell id="car-model-attrs" parent="car-model" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="марка: string&lt;br&gt;модель: string&lt;br&gt;рікВипуску: int" vertex="1">
+          <mxGeometry height="67" width="300" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="car-model-ops" parent="car-model" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="30" width="300" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="manager" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="Менеджер" vertex="1">
+          <mxGeometry height="205" width="340" x="1408" y="423" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-attrs" parent="manager" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="відділ: string" vertex="1">
+          <mxGeometry height="34" width="340" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="manager-ops" parent="manager" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="ПереглянутиКритичніЗалишки(): void&lt;br&gt;ОбратиПостачальника(&lt;br&gt;запчастина: Запчастина): Постачальник&lt;br&gt;СформуватиЗамовлення(&lt;br&gt;запчастина: Запчастина, постачальник: Постачальник,&lt;br&gt;кількість: int): Замовлення" vertex="1">
+          <mxGeometry height="143" width="340" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="storekeeper" parent="1" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;fontStyle=1;align=center;verticalAlign=middle;container=1;recursiveResize=0;fillColor=#FFFFFF;fontColor=#333333;strokeColor=light-dark(#000000,#000000);labelBackgroundColor=none;" value="Комірник" vertex="1">
+          <mxGeometry height="200" width="400" x="1836" y="427" as="geometry" />
+        </mxCell>
+        <mxCell id="storekeeper-attrs" parent="storekeeper" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#ffffff;fontColor=#000000;strokeColor=#000000;" value="зонаВідповідальності: string" vertex="1">
+          <mxGeometry height="34" width="400" y="28" as="geometry" />
+        </mxCell>
+        <mxCell id="storekeeper-ops" parent="storekeeper" style="text;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;whiteSpace=wrap;overflow=hidden;rotatable=0;fontSize=12;fillColor=#FFFFFF;fontColor=#333333;strokeColor=#000000;labelBackgroundColor=none;" value="ОформитиВидачу(&lt;br&gt;запчастина: Запчастина, кількість: int): void&lt;br&gt;ПрийнятиПоставку(замовлення: Замовлення): void&lt;br&gt;ПовідомитиПроКритичнийЗалишок(&lt;br&gt;запчастина: Запчастина): void" vertex="1">
+          <mxGeometry height="138" width="400" y="62" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-warehouse-part" edge="1" parent="1" source="warehouse-ops" style="edgeStyle=none;html=1;startArrow=diamondThin;startFill=0;startSize=16;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=0.534;exitY=0.991;entryX=0.5;entryY=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="part" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-supplier-part" edge="1" parent="1" source="supplier" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;entryX=0;entryY=0.4;exitDx=0;exitDy=0;" target="part" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="195" y="675" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-part-car" edge="1" parent="1" source="part" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;entryX=1;entryY=0.2;exitDx=0;exitDy=0;" target="car-model" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="601" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-warehouse-employee" edge="1" parent="1" source="warehouse-attrs" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;exitDx=0;exitDy=0;" target="employee" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-supplier-order" edge="1" parent="1" source="supplier" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.35;entryX=0;entryY=0.2;" target="order" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-warehouse-order" edge="1" parent="1" source="warehouse" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.72;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="order" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1139" y="269" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-part-order" edge="1" parent="1" source="part" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.2;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="order" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1139" y="638" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-manager-order" edge="1" parent="1" source="manager" style="edgeStyle=none;html=1;startArrow=none;endArrow=none;strokeColor=#000000;strokeWidth=1;exitX=0;exitY=0.18;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="order-attrs" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="1365" y="439.4000000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-manager-employee" edge="1" parent="1" source="manager" style="edgeStyle=none;html=1;endArrow=block;endFill=0;endSize=16;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=0;entryX=0.538;entryY=1.05;entryDx=0;entryDy=0;entryPerimeter=0;" target="employee-ops" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1576" y="325" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel-storekeeper-employee" edge="1" parent="1" source="storekeeper" style="edgeStyle=none;html=1;endArrow=block;endFill=0;endSize=16;strokeColor=#000000;strokeWidth=1;exitX=0.225;exitY=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="employee" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1926" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lab-wp" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="зберігає" vertex="1">
+          <mxGeometry height="18" width="90" x="593" y="514" as="geometry" />
+        </mxCell>
+        <mxCell id="m-wp-w" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="1" vertex="1">
+          <mxGeometry height="18" width="24" x="602" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="m-wp-p" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="600" y="574" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-sp" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="постачає" vertex="1">
+          <mxGeometry height="18" width="95" x="161" y="584" as="geometry" />
+        </mxCell>
+        <mxCell id="m-sp-s" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="191" y="486" as="geometry" />
+        </mxCell>
+        <mxCell id="m-sp-p" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="401" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-pc" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="сумісна з" vertex="1">
+          <mxGeometry height="18" width="90" x="440" y="835" as="geometry" />
+        </mxCell>
+        <mxCell id="m-pc-p" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="588" y="797" as="geometry" />
+        </mxCell>
+        <mxCell id="m-pc-c" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="382" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-we" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="має працівників" vertex="1">
+          <mxGeometry height="18" width="120" x="880" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="m-we-w" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="1" vertex="1">
+          <mxGeometry height="18" width="24" x="769" y="123" as="geometry" />
+        </mxCell>
+        <mxCell id="m-we-e" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="1367" y="129" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-so" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="виконує" vertex="1">
+          <mxGeometry height="18" width="80" x="445" y="376" as="geometry" />
+        </mxCell>
+        <mxCell id="m-so-s" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="1" vertex="1">
+          <mxGeometry height="18" width="24" x="333" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="m-so-o" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="1129" y="344" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-wo" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="отримує" vertex="1">
+          <mxGeometry height="18" width="70" x="934" y="243" as="geometry" />
+        </mxCell>
+        <mxCell id="m-wo-w" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="1" vertex="1">
+          <mxGeometry height="18" width="24" x="763" y="246" as="geometry" />
+        </mxCell>
+        <mxCell id="m-wo-o" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="943" y="376" as="geometry" />
+        </mxCell>
+        <mxCell id="m-po-p" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="1" vertex="1">
+          <mxGeometry height="18" width="24" x="1112" y="542" as="geometry" />
+        </mxCell>
+        <mxCell id="m-po-o" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="42" x="766" y="616" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-mo" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="формує" vertex="1">
+          <mxGeometry height="18" width="85" x="1297" y="438" as="geometry" />
+        </mxCell>
+        <mxCell id="m-mo-m" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="1" vertex="1">
+          <mxGeometry height="18" width="24" x="1382" y="461" as="geometry" />
+        </mxCell>
+        <mxCell id="m-mo-o" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;fontSize=12;fontColor=#000000;" value="0..*" vertex="1">
+          <mxGeometry height="18" width="24" x="1293" y="461" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

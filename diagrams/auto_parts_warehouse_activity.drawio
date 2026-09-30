@@ -1,0 +1,160 @@
+<mxfile host="Electron" agent="Codex">
+  <diagram id="auto-parts-warehouse-activity" name="Діаграма діяльності">
+    <mxGraphModel dx="1100" dy="788" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1400" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#000000;" value="Діаграма діяльності процесу «Пошук і видача запчастини»" vertex="1">
+          <mxGeometry height="42" width="900" x="100" y="24" as="geometry" />
+        </mxCell>
+        <mxCell id="initial" parent="1" style="shape=startState;html=1;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="535" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="act-enter-search-data" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Ввести дані для пошуку запчастини" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="act-find-part" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Знайти запчастину" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="dec-part-found" parent="1" style="rhombus;whiteSpace=wrap;html=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;spacing=8;" value="Запчастину знайдено?" vertex="1">
+          <mxGeometry height="88" width="230" x="435" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="act-not-found" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Повідомити, що запчастину не знайдено" vertex="1">
+          <mxGeometry height="62" width="300" x="70" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="act-enter-issue-quantity" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Вказати кількість для видачі" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="act-check-stock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Перевірити кількість на складі" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="dec-in-stock" parent="1" style="rhombus;whiteSpace=wrap;html=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;spacing=8;" value="Кількості достатньо для видачі?" vertex="1">
+          <mxGeometry height="88" width="280" x="410" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="act-not-in-stock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Повідомити про недостатню кількість" vertex="1">
+          <mxGeometry height="68" width="300" x="70" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="act-issue-part" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Видати запчастину" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="act-decrease-stock" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Зменшити кількість на складі" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="855" as="geometry" />
+        </mxCell>
+        <mxCell id="act-check-minimum" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Перевірити залишок" vertex="1">
+          <mxGeometry height="54" width="300" x="400" y="945" as="geometry" />
+        </mxCell>
+        <mxCell id="dec-below-minimum" parent="1" style="rhombus;whiteSpace=wrap;html=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;spacing=8;" value="Залишок критичний?" vertex="1">
+          <mxGeometry height="98" width="300" x="400" y="1035" as="geometry" />
+        </mxCell>
+        <mxCell id="act-restock-needed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;absoluteArcSize=1;strokeColor=#000000;fillColor=#ffffff;fontColor=#000000;fontSize=13;align=center;verticalAlign=middle;" value="Повідомити менеджера про критичний залишок" vertex="1">
+          <mxGeometry height="68" width="300" x="70" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="final" parent="1" style="shape=endState;html=1;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="34" width="34" x="533" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-initial-enter" edge="1" parent="1" source="initial" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="act-enter-search-data" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-enter-find" edge="1" parent="1" source="act-enter-search-data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="act-find-part" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-find-found" edge="1" parent="1" source="act-find-part" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="dec-part-found" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-found-no" edge="1" parent="1" source="dec-part-found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act-not-found" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="369" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="guard-found-no" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" value="[ні]" vertex="1">
+          <mxGeometry height="20" width="45" x="372" y="344" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-found-yes" edge="1" parent="1" source="dec-part-found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act-enter-issue-quantity" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="guard-found-yes" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" value="[так]" vertex="1">
+          <mxGeometry height="20" width="55" x="560" y="423" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-enter-quantity-check-stock" edge="1" parent="1" source="act-enter-issue-quantity" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="act-check-stock" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-check-stock-stock" edge="1" parent="1" source="act-check-stock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="dec-in-stock" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-stock-no" edge="1" parent="1" source="dec-in-stock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act-not-in-stock" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="679" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="guard-stock-no" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" value="[ні]" vertex="1">
+          <mxGeometry height="20" width="45" x="347" y="654" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-stock-yes" edge="1" parent="1" source="dec-in-stock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act-issue-part" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="guard-stock-yes" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" value="[так]" vertex="1">
+          <mxGeometry height="20" width="55" x="560" y="733" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-issue-decrease" edge="1" parent="1" source="act-issue-part" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="act-decrease-stock" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-decrease-check-min" edge="1" parent="1" source="act-decrease-stock" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="act-check-minimum" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-check-min-decision" edge="1" parent="1" source="act-check-minimum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;" target="dec-below-minimum" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-min-yes" edge="1" parent="1" source="dec-below-minimum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="act-restock-needed" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="1084" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="guard-min-yes" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" value="[так]" vertex="1">
+          <mxGeometry height="20" width="55" x="246" y="1059" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-min-no" edge="1" parent="1" source="dec-below-minimum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="final" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="1084" />
+              <mxPoint x="780" y="1307" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="guard-min-no" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#000000;" value="[ні]" vertex="1">
+          <mxGeometry height="20" width="45" x="694" y="1059" as="geometry" />
+        </mxCell>
+        <mxCell id="flow-not-found-final" edge="1" parent="1" source="act-not-found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="final" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="40" y="548" />
+              <mxPoint x="40" y="1307" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-not-stock-final" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="376" y="865" />
+              <mxPoint x="376" y="1280" />
+            </Array>
+            <mxPoint x="211" y="833" as="sourcePoint" />
+            <mxPoint x="524" y="1307" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow-restock-final" edge="1" parent="1" source="act-restock-needed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="final" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="1307" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
