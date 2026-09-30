@@ -1,0 +1,32 @@
+@model IEnumerable<AutoPartsWarehouse.Models.AutoPart>
+
+<h1>Запчастини</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Виробник</th>
+            <th>Кількість</th>
+            <th>Мінімальний залишок</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var part in Model)
+        {
+            <tr>
+                <td>@part.Name</td>
+                <td>@part.Manufacturer</td>
+                <td>@part.QuantityInStock</td>
+                <td>@part.MinimumStock</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@part.Id">Деталі</a>
+                    <a asp-action="Edit" asp-route-id="@part.Id">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@part.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
