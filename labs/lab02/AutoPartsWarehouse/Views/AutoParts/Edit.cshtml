@@ -1,0 +1,33 @@
+@model AutoPartsWarehouse.Models.AutoPart
+
+<h1>Редагувати запчастину</h1>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div>
+        <label>Назва</label>
+        <input asp-for="Name" />
+    </div>
+
+    <div>
+        <label>Виробник</label>
+        <input asp-for="Manufacturer" />
+    </div>
+
+    <div>
+        <label>Кількість на складі</label>
+        <input asp-for="QuantityInStock" />
+    </div>
+
+    <div>
+        <label>Мінімальний залишок</label>
+        <input asp-for="MinimumStock" />
+    </div>
+
+    <button type="submit">Зберегти</button>
+
+</form>
+
+<a asp-action="Index">Назад до списку</a>

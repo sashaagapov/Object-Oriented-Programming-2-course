@@ -1,0 +1,23 @@
+* text=auto
+
+*.md text eol=lf
+*.txt text eol=lf
+*.cs text eol=lf
+*.cshtml text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.drawio text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.docx binary
+*.pptx binary
+*.pdf binary
+*.db binary
+*.dll binary
+*.exe binary
+*.dylib binary

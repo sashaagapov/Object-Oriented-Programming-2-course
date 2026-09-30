@@ -1,0 +1,27 @@
+@model AutoPartsWarehouse.ViewModels.IssuePartViewModel
+
+<h1>Видача запчастини</h1>
+
+<p><strong>Запчастина:</strong> @Model.PartName</p>
+<p><strong>На складі:</strong> @Model.QuantityInStock</p>
+
+<form asp-action="Issue" method="post">
+
+    <input type="hidden" asp-for="AutoPartId" />
+
+    <div>
+        <label>Кількість для видачі</label>
+        <input asp-for="Quantity" />
+    </div>
+
+    <div>
+        <label>
+            <input asp-for="IsPaymentConfirmed" />
+            Оплату підтверджено
+        </label>
+    </div>
+
+    <button type="submit">Видати</button>
+</form>
+
+<a asp-action="Index">Назад</a>
