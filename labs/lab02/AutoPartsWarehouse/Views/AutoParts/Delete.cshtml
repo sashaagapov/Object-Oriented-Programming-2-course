@@ -4,13 +4,15 @@
 
 <p>Ви дійсно хочете видалити цю запчастину?</p>
 
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 <div>
     <p><strong>Назва:</strong> @Model.Name</p>
     <p><strong>Виробник:</strong> @Model.Manufacturer</p>
     <p><strong>Кількість:</strong> @Model.QuantityInStock</p>
 </div>
 
-<form asp-action="Delete" method="post">
+<form asp-action="DeleteConfirmed" method="post">
     <input type="hidden" asp-for="Id" />
 
     <button type="submit">Видалити</button>

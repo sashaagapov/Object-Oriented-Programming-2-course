@@ -1,0 +1,58 @@
+@model AutoPartsWarehouse.ViewModels.CreatePurchaseOrderViewModel
+
+<h1>Створити замовлення</h1>
+
+<p>Якщо потрібного постачальника немає, <a asp-controller="Suppliers" asp-action="Create">додайте його</a>.</p>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div>
+        <label asp-for="SupplierId">Постачальник</label>
+        <select asp-for="SupplierId" asp-items="Model.Suppliers">
+            <option value="0">Виберіть постачальника</option>
+        </select>
+        <span asp-validation-for="SupplierId" class="text-danger"></span>
+    </div>
+
+    <h2>Запчастини</h2>
+    <div id="order-items">
+        @for (var i = 0; i < Model.Items.Count; i++)
+        {
+            <div class="mb-2">
+                <select asp-for="Items[i].AutoPartId" asp-items="Model.AutoParts">
+                    <option value="">Виберіть запчастину</option>
+                </select>
+                <input asp-for="Items[i].Quantity" type="number" min="1" placeholder="Кількість" />
+            </div>
+        }
+    </div>
+    <button type="button" id="add-item">Додати позицію</button>
+    <button type="submit">Створити замовлення</button>
+</form>
+
+<template id="item-template">
+    <div class="mb-2">
+        <select name="Items[__index__].AutoPartId">
+            <option value="">Виберіть запчастину</option>
+            @foreach (var part in Model.AutoParts)
+            {
+                <option value="@part.Value">@part.Text</option>
+            }
+        </select>
+        <input name="Items[__index__].Quantity" type="number" min="1" placeholder="Кількість" />
+    </div>
+</template>
+
+<a asp-action="Index">Назад до списку</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let itemIndex = @Model.Items.Count;
+        document.getElementById('add-item').addEventListener('click', function () {
+            const template = document.getElementById('item-template').innerHTML;
+            document.getElementById('order-items').insertAdjacentHTML(
+                'beforeend', template.replaceAll('__index__', itemIndex++));
+        });
+    </script>
+}

@@ -18,4 +18,7 @@ public class PurchaseOrder
     public int SupplierId { get; set; }
 
     public Supplier Supplier { get; set; } = null!;
+
+    public ICollection<PurchaseOrderItem> Items { get; set; }
+        = new List<PurchaseOrderItem>();
 }

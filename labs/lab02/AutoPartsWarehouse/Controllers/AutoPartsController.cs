@@ -12,12 +12,26 @@ public class AutoPartsController : Controller
     {
         _context = context;
     }
-
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? query, bool criticalOnly = false)
     {
-        var autoParts = await _context.AutoParts.ToListAsync();
+        var autoParts = _context.AutoParts.AsQueryable();
 
-        return View(autoParts);
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            query = query.Trim();
+            autoParts = autoParts.Where(part =>
+                part.Name.Contains(query) || part.Manufacturer.Contains(query));
+        }
+
+        if (criticalOnly)
+        {
+            autoParts = autoParts.Where(part =>
+                part.QuantityInStock > 0 && part.QuantityInStock <= part.MinimumStock);
+        }
+
+        ViewBag.Query = query;
+        ViewBag.CriticalOnly = criticalOnly;
+        return View(await autoParts.OrderBy(part => part.Name).ToListAsync());
     }
     [HttpGet]
     public IActionResult Create()
@@ -82,9 +96,35 @@ public class AutoPartsController : Controller
 
         return View(autoPart);
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var autoPart = await _context.AutoParts.FindAsync(id);
+
+        if (autoPart == null)
+        {
+            return NotFound();
+        }
+
+        if (await _context.PartIssues.AnyAsync(issue => issue.AutoPartId == id) ||
+            await _context.PurchaseOrderItems.AnyAsync(item => item.AutoPartId == id))
+        {
+            ModelState.AddModelError(string.Empty,
+                "Запчастину з історією видач або замовлень видалити не можна.");
+            return View("Delete", autoPart);
+        }
+
+        _context.AutoParts.Remove(autoPart);
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
     public async Task<IActionResult> Details(int id)
     {
         var autoPart = await _context.AutoParts
+            .Include(part => part.VehicleModels)
             .FirstOrDefaultAsync(part => part.Id == id);
 
         if (autoPart == null)

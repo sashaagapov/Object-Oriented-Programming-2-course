@@ -7,11 +7,14 @@
 
 <form asp-action="Issue" method="post">
 
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <input type="hidden" asp-for="AutoPartId" />
 
     <div>
         <label>Кількість для видачі</label>
         <input asp-for="Quantity" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
     </div>
 
     <div>
@@ -19,9 +22,14 @@
             <input asp-for="IsPaymentConfirmed" />
             Оплату підтверджено
         </label>
+        <span asp-validation-for="IsPaymentConfirmed" class="text-danger"></span>
     </div>
 
     <button type="submit">Видати</button>
 </form>
 
 <a asp-action="Index">Назад</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
