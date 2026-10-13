@@ -1,14 +1,28 @@
 @model IEnumerable<AutoPartsWarehouse.Models.AutoPart>
 
-<h1>Запчастини</h1>
+<h1>@(ViewBag.CriticalOnly ? "Критичні залишки" : "Запчастини")</h1>
 
-<table>
+<p><a asp-action="Create">Додати запчастину</a></p>
+
+<form asp-action="Index" method="get" class="mb-3">
+    @if (ViewBag.CriticalOnly)
+    {
+        <input type="hidden" name="criticalOnly" value="true" />
+    }
+    <label for="query">Пошук за назвою або виробником</label>
+    <input id="query" name="query" value="@ViewBag.Query" />
+    <button type="submit">Знайти</button>
+    <a asp-action="Index">Скинути</a>
+</form>
+
+<table class="table">
     <thead>
         <tr>
             <th>Назва</th>
             <th>Виробник</th>
             <th>Кількість</th>
             <th>Мінімальний залишок</th>
+            <th>Стан</th>
             <th>Дії</th>
         </tr>
     </thead>
@@ -22,11 +36,31 @@
                 <td>@part.QuantityInStock</td>
                 <td>@part.MinimumStock</td>
                 <td>
+                    @if (part.QuantityInStock == 0)
+                    {
+                        <span>Відсутня</span>
+                    }
+                    else if (part.QuantityInStock <= part.MinimumStock)
+                    {
+                        <span>Критичний залишок</span>
+                    }
+                    else
+                    {
+                        <span>Доступна</span>
+                    }
+                </td>
+                <td>
                     <a asp-action="Details" asp-route-id="@part.Id">Деталі</a>
                     <a asp-action="Edit" asp-route-id="@part.Id">Редагувати</a>
                     <a asp-action="Delete" asp-route-id="@part.Id">Видалити</a>
+                    <a asp-action="Issue" asp-route-id="@part.Id">Видати</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@if (!Model.Any())
+{
+    <p>Запчастин не знайдено.</p>
+}

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace AutoPartsWarehouse.Models;
 
 public class PurchaseOrderItem
@@ -10,5 +12,6 @@ public class PurchaseOrderItem
     public int AutoPartId { get; set; }
     public AutoPart AutoPart { get; set; } = null!;
 
+    [Range(1, int.MaxValue, ErrorMessage = "Кількість повинна бути більшою за 0.")]
     public int Quantity { get; set; }
 }

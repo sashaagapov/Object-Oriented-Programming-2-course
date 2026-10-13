@@ -1,0 +1,36 @@
+@model IEnumerable<AutoPartsWarehouse.Models.PurchaseOrder>
+
+<h1>Замовлення</h1>
+
+<p><a asp-action="Create">Створити замовлення</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Дата</th>
+            <th>Постачальник</th>
+            <th>Позицій</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.OrderDate.ToShortDateString()</td>
+                <td>@order.Supplier.Name</td>
+                <td>@order.Items.Count</td>
+                <td>@(order.Status == PurchaseOrderStatus.Received ? "Отримано" : "Створено")</td>
+                <td><a asp-action="Details" asp-route-id="@order.Id">Деталі</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p>Замовлень поки немає.</p>
+}

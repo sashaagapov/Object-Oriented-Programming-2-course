@@ -1,0 +1,39 @@
+@model AutoPartsWarehouse.Models.PurchaseOrder
+
+<h1>Замовлення №@Model.Id</h1>
+
+@if (TempData["Message"] != null)
+{
+    <p>@TempData["Message"]</p>
+}
+
+<p><strong>Постачальник:</strong> @Model.Supplier.Name</p>
+<p><strong>Дата:</strong> @Model.OrderDate.ToShortDateString()</p>
+<p><strong>Статус:</strong> @(Model.Status == PurchaseOrderStatus.Received ? "Отримано" : "Створено")</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Запчастина</th>
+            <th>Кількість</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.AutoPart.Name</td>
+                <td>@item.Quantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Status != PurchaseOrderStatus.Received)
+{
+    <form asp-action="Receive" asp-route-id="@Model.Id" method="post">
+        <button type="submit">Отримати замовлення</button>
+    </form>
+}
+
+<a asp-action="Index">Назад до списку</a>

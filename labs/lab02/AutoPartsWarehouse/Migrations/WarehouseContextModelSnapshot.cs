@@ -40,6 +40,7 @@ namespace AutoPartsWarehouse.Migrations
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MinimumStock")
@@ -47,6 +48,7 @@ namespace AutoPartsWarehouse.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("QuantityInStock")
@@ -133,10 +135,12 @@ namespace AutoPartsWarehouse.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -212,7 +216,7 @@ namespace AutoPartsWarehouse.Migrations
                         .IsRequired();
 
                     b.HasOne("AutoPartsWarehouse.Models.PurchaseOrder", "PurchaseOrder")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -227,6 +231,11 @@ namespace AutoPartsWarehouse.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("PartIssues");
+                });
+
+            modelBuilder.Entity("AutoPartsWarehouse.Models.PurchaseOrder", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("AutoPartsWarehouse.Models.Supplier", b =>
