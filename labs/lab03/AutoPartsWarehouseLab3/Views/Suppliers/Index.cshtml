@@ -1,0 +1,28 @@
+@model IEnumerable<AutoPartsWarehouse.Models.Supplier>
+
+<h1>Постачальники</h1>
+
+<p><a asp-action="Create">Додати постачальника</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Телефон</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var supplier in Model)
+        {
+            <tr>
+                <td>@supplier.Name</td>
+                <td>@supplier.Phone</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p>Постачальників поки немає.</p>
+}

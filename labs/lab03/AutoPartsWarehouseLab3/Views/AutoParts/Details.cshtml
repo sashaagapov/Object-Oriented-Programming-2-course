@@ -1,0 +1,30 @@
+@model AutoPartsWarehouse.Models.AutoPart
+
+<h1>Деталі запчастини</h1>
+
+<div>
+    <p><strong>Назва:</strong> @Model.Name</p>
+
+    <p><strong>Виробник:</strong> @Model.Manufacturer</p>
+
+    <p><strong>Кількість на складі:</strong> @Model.QuantityInStock</p>
+
+    <p><strong>Мінімальний залишок:</strong> @Model.MinimumStock</p>
+</div>
+
+<h2>Сумісні моделі авто</h2>
+@if (Model.VehicleModels.Any())
+{
+    <ul>
+        @foreach (var vehicle in Model.VehicleModels)
+        {
+            <li>@vehicle.Brand @vehicle.ModelName (@vehicle.ProductionYear)</li>
+        }
+    </ul>
+}
+else
+{
+    <p>Сумісні моделі не вказані.</p>
+}
+
+<a asp-action="Index">Назад до списку</a>

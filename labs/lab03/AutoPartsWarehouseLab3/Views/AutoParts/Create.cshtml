@@ -1,0 +1,39 @@
+@model AutoPartsWarehouse.Models.AutoPart
+
+<h1>Додати запчастину</h1>
+
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div>
+        <label>Назва</label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Виробник</label>
+        <input asp-for="Manufacturer" />
+        <span asp-validation-for="Manufacturer" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Кількість на складі</label>
+        <input asp-for="QuantityInStock" />
+        <span asp-validation-for="QuantityInStock" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Мінімальний залишок</label>
+        <input asp-for="MinimumStock" />
+        <span asp-validation-for="MinimumStock" class="text-danger"></span>
+    </div>
+
+    <button type="submit">Додати</button>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
