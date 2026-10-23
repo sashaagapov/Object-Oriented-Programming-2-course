@@ -1,0 +1,42 @@
+@model List<AutoPartsWarehouse.Models.PartIssue>
+
+<h1>Видача запчастин за період</h1>
+
+<form method="get" class="mb-4">
+    <div class="mb-2">
+        <label>Від:</label>
+        <input type="date" name="from" value="@ViewBag.From" class="form-control" />
+    </div>
+
+    <div class="mb-2">
+        <label>До:</label>
+        <input type="date" name="to" value="@ViewBag.To" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Показати
+    </button>
+</form>
+
+<h4>Всього видано: @ViewBag.TotalQuantity</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Запчастина</th>
+            <th>Кількість</th>
+            <th>Дата</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var issue in Model)
+        {
+            <tr>
+                <td>@issue.AutoPart.Name</td>
+                <td>@issue.Quantity</td>
+                <td>@issue.IssuedAt.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

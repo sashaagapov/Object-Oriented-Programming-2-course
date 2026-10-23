@@ -4,13 +4,14 @@
 
 @if (TempData["Message"] != null)
 {
-    <p>@TempData["Message"]</p>
+    <div class="alert alert-info" role="status">@TempData["Message"]</div>
 }
 
 <p><strong>Постачальник:</strong> @Model.Supplier.Name</p>
 <p><strong>Дата:</strong> @Model.OrderDate.ToShortDateString()</p>
-<p><strong>Статус:</strong> @(Model.Status == PurchaseOrderStatus.Received ? "Отримано" : "Створено")</p>
+<p><strong>Статус:</strong> @(Model.Status == PurchaseOrderStatus.Received ? "Отримано" : Model.Status == PurchaseOrderStatus.Ordered ? "Замовлено" : "Створено")</p>
 
+<div class="table-responsive">
 <table class="table">
     <thead>
         <tr>
@@ -28,6 +29,7 @@
         }
     </tbody>
 </table>
+</div>
 
 @if (Model.Status != PurchaseOrderStatus.Received)
 {

@@ -1,0 +1,24 @@
+@model List<AutoPartsWarehouse.ViewModels.ManufacturerStockViewModel>
+
+<h1>Статистика за виробниками</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Виробник</th>
+            <th>Кількість видів запчастин</th>
+            <th>Загальна кількість на складі</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Manufacturer</td>
+                <td>@item.PartCount</td>
+                <td>@item.TotalQuantity</td>
+            </tr>
+        }
+    </tbody>
+</table>

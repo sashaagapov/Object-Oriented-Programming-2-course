@@ -1,4 +1,5 @@
 using AutoPartsWarehouse.Models;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsWarehouse.ViewModels;
@@ -40,15 +41,32 @@ public class AutoPartsController : Controller
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(AutoPart autoPart)
+    public async Task<IActionResult> Create([Bind("Name,Manufacturer,QuantityInStock,MinimumStock")] AutoPart autoPart)
     {
+        NormalizeNameAndManufacturer(autoPart);
+
+        if (ModelState.IsValid && await PartAlreadyExists(autoPart.Name, autoPart.Manufacturer))
+        {
+            ModelState.AddModelError(string.Empty,
+                "Запчастина з такою назвою та виробником уже існує. Змініть її кількість у наявному записі.");
+        }
+
         if (!ModelState.IsValid)
         {
             return View(autoPart);
         }
 
         _context.AutoParts.Add(autoPart);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException exception) when (IsUniqueConstraintViolation(exception))
+        {
+            ModelState.AddModelError(string.Empty,
+                "Запчастина з такою назвою та виробником уже існує. Змініть її кількість у наявному записі.");
+            return View(autoPart);
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -66,11 +84,19 @@ public class AutoPartsController : Controller
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, AutoPart autoPart)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Manufacturer,QuantityInStock,MinimumStock")] AutoPart autoPart)
     {
         if (id != autoPart.Id)
         {
             return BadRequest();
+        }
+
+        NormalizeNameAndManufacturer(autoPart);
+
+        if (ModelState.IsValid && await PartAlreadyExists(autoPart.Name, autoPart.Manufacturer, id))
+        {
+            ModelState.AddModelError(string.Empty,
+                "Запчастина з такою назвою та виробником уже існує.");
         }
 
         if (!ModelState.IsValid)
@@ -78,10 +104,51 @@ public class AutoPartsController : Controller
             return View(autoPart);
         }
 
-        _context.AutoParts.Update(autoPart);
-        await _context.SaveChangesAsync();
+        var existingPart = await _context.AutoParts.FindAsync(id);
+        if (existingPart == null)
+        {
+            return NotFound();
+        }
+
+        existingPart.Name = autoPart.Name;
+        existingPart.Manufacturer = autoPart.Manufacturer;
+        existingPart.QuantityInStock = autoPart.QuantityInStock;
+        existingPart.MinimumStock = autoPart.MinimumStock;
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException exception) when (IsUniqueConstraintViolation(exception))
+        {
+            ModelState.AddModelError(string.Empty,
+                "Запчастина з такою назвою та виробником уже існує.");
+            return View(autoPart);
+        }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<bool> PartAlreadyExists(string name, string manufacturer, int? excludedId = null)
+    {
+        var existingParts = await _context.AutoParts
+            .Where(part => !excludedId.HasValue || part.Id != excludedId.Value)
+            .Select(part => new { part.Name, part.Manufacturer })
+            .ToListAsync();
+
+        return existingParts.Any(part =>
+            string.Equals(part.Name.Trim(), name, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(part.Manufacturer.Trim(), manufacturer, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static void NormalizeNameAndManufacturer(AutoPart autoPart)
+    {
+        autoPart.Name = (autoPart.Name ?? string.Empty).Trim();
+        autoPart.Manufacturer = (autoPart.Manufacturer ?? string.Empty).Trim();
+    }
+
+    private static bool IsUniqueConstraintViolation(DbUpdateException exception)
+    {
+        return exception.InnerException is SqliteException { SqliteErrorCode: 19 };
     }
     [HttpGet]
     public async Task<IActionResult> Delete(int id)
@@ -125,6 +192,7 @@ public class AutoPartsController : Controller
     {
         var autoPart = await _context.AutoParts
             .Include(part => part.VehicleModels)
+            .Include(part => part.PartIssues)
             .FirstOrDefaultAsync(part => part.Id == id);
 
         if (autoPart == null)
@@ -148,7 +216,8 @@ public class AutoPartsController : Controller
         {
             AutoPartId = autoPart.Id,
             PartName = autoPart.Name,
-            QuantityInStock = autoPart.QuantityInStock
+            QuantityInStock = autoPart.QuantityInStock,
+            Quantity = 1
         };
 
         return View(viewModel);
@@ -157,6 +226,7 @@ public class AutoPartsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Issue(IssuePartViewModel viewModel)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         var autoPart = await _context.AutoParts.FindAsync(viewModel.AutoPartId);
 
         if (autoPart == null)
@@ -208,6 +278,7 @@ public class AutoPartsController : Controller
         _context.PartIssues.Add(partIssue);
 
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
 
         return RedirectToAction(nameof(Index));
     }

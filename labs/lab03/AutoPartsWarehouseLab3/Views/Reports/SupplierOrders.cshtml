@@ -1,0 +1,45 @@
+@model List<AutoPartsWarehouse.Models.PurchaseOrder>
+
+<h1>Замовлення постачальникам</h1>
+
+@foreach (var order in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>
+                Замовлення №@order.Id
+            </h5>
+
+            <p>
+                Постачальник: @order.Supplier.Name
+            </p>
+
+            <p>
+                Дата: @order.OrderDate.ToShortDateString()
+            </p>
+
+            <p>
+                Статус: @order.Status
+            </p>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Запчастина</th>
+                        <th>Кількість</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in order.Items)
+                    {
+                        <tr>
+                            <td>@item.AutoPart.Name</td>
+                            <td>@item.Quantity</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

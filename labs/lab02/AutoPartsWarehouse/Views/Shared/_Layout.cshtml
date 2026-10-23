@@ -1,55 +1,40 @@
-﻿<!DOCTYPE html>
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var critical = Context.Request.Query["criticalOnly"] == "true";
+}
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AutoPartsWarehouse</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/AutoPartsWarehouse.styles.css" asp-append-version="true" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>@(ViewData["Title"] ?? "Склад запчастин") — Автосклад</title>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AutoPartsWarehouse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AutoParts" asp-action="Index">Запчастини</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AutoParts" asp-action="Index" asp-route-criticalOnly="true">Критичні залишки</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseOrders" asp-action="Index">Замовлення</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Suppliers" asp-action="Index">Постачальники</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - AutoPartsWarehouse
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<header class="warehouse-header">
+<nav class="container navbar navbar-expand-md navbar-dark">
+<a class="navbar-brand" asp-controller="AutoParts" asp-action="Index"><span class="brand-icon">A</span> Автосклад</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Відкрити меню"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="navigation"><div class="navbar-nav ms-auto">
+<a class="nav-link @(controller == "AutoParts" && !critical ? "active" : "")" asp-controller="AutoParts" asp-action="Index">Запчастини</a>
+<a class="nav-link @(critical ? "active" : "")" asp-controller="AutoParts" asp-action="Index" asp-route-criticalOnly="true">Критичні залишки</a>
+<a class="nav-link @(controller == "PurchaseOrders" ? "active" : "")" asp-controller="PurchaseOrders" asp-action="Index">Замовлення</a>
+<a class="nav-link @(controller == "Suppliers" ? "active" : "")" asp-controller="Suppliers" asp-action="Index">Постачальники</a>
+</div></div>
+</nav>
+</header>
+<div class="container workspace">
+<p class="eyebrow">ОБЛІК ЗАПЧАСТИН / СКЛАД</p>
+<main id="main-content">
+@if (TempData["Success"] is string message) { <div class="alert alert-success" role="status">@message</div> }
+@RenderBody()
+</main>
+</div>
+<footer class="container warehouse-footer">Автосклад <span>Запчастини · Постачання · Видача</span></footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

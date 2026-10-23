@@ -2,8 +2,10 @@
 
 <h1>Постачальники</h1>
 
-<p><a asp-action="Create">Додати постачальника</a></p>
+<p class="subtitle">Контакти постачальників для оформлення нових замовлень.</p>
+<p><a class="btn btn-primary" asp-action="Create">+ Додати постачальника</a></p>
 
+<div class="table-responsive">
 <table class="table">
     <thead>
         <tr>
@@ -21,6 +23,7 @@
         }
     </tbody>
 </table>
+</div>
 
 @if (!Model.Any())
 {

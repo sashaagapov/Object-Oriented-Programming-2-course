@@ -1,0 +1,34 @@
+@model List<AutoPartsWarehouse.Models.AutoPart>
+
+@{
+    ViewData["Title"] = "Критичний запас";
+}
+
+<h1>Запчастини з критичним запасом</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Виробник</th>
+            <th>Кількість</th>
+            <th>Мінімальний запас</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var part in Model)
+        {
+            <tr>
+                <td>@part.Name</td>
+                <td>@part.Manufacturer</td>
+                <td>@part.QuantityInStock</td>
+                <td>@part.MinimumStock</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">
+    Назад
+</a>

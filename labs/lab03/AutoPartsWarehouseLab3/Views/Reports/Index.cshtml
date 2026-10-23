@@ -1,0 +1,75 @@
+@model List<AutoPartsWarehouse.Models.AutoPart>
+
+@{
+    ViewData["Title"] = "Звіти";
+}
+
+<h1>Звіти</h1>
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-primary">
+        Пошук за виробником
+    </a>
+
+    <a asp-action="CriticalStock" class="btn btn-outline-primary">
+        Критичні залишки
+    </a>
+
+    <a asp-action="ManufacturerStatistics" class="btn btn-outline-primary">
+        Статистика виробників
+    </a>
+
+    <a asp-action="SupplierOrders" class="btn btn-outline-primary">
+        Замовлення постачальникам
+    </a>
+
+    <a asp-action="IssuedByPeriod" class="btn btn-outline-primary">
+        Видача за період
+    </a>
+</div>
+
+<hr />
+
+<h2>Пошук запчастин за виробником</h2>
+
+<form method="get">
+    <div class="mb-3">
+        <label class="form-label">Виробник</label>
+
+        <input type="text" name="manufacturer" value="@ViewBag.Manufacturer" class="form-control"
+               placeholder="Наприклад, Bosch" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Знайти
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Скинути
+    </a>
+</form>
+
+<hr />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Виробник</th>
+            <th>Кількість</th>
+            <th>Мінімальний запас</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var part in Model)
+        {
+            <tr>
+                <td>@part.Name</td>
+                <td>@part.Manufacturer</td>
+                <td>@part.QuantityInStock</td>
+                <td>@part.MinimumStock</td>
+            </tr>
+        }
+    </tbody>
+</table>
