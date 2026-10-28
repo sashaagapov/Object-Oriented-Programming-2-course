@@ -19,6 +19,7 @@ public class ReportsController : Controller
 
         if (!string.IsNullOrWhiteSpace(manufacturer))
         {
+            manufacturer = manufacturer.Trim();
             parts = parts.Where(part =>
                 part.Manufacturer.Contains(manufacturer));
         }

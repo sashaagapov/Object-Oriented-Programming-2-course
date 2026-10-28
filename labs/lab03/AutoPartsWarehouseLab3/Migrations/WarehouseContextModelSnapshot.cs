@@ -56,6 +56,9 @@ namespace AutoPartsWarehouse.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name", "Manufacturer")
+                        .IsUnique();
+
                     b.ToTable("AutoParts");
                 });
 

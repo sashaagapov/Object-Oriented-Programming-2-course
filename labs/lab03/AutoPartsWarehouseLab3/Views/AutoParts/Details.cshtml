@@ -27,4 +27,24 @@ else
     <p>Сумісні моделі не вказані.</p>
 }
 
-<a asp-action="Index">Назад до списку</a>
+<h2>Історія видач</h2>
+@if (Model.PartIssues.Any())
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead><tr><th>Дата і час</th><th>Кількість, шт.</th></tr></thead>
+            <tbody>
+                @foreach (var issue in Model.PartIssues.OrderByDescending(issue => issue.IssuedAt))
+                {
+                    <tr><td>@issue.IssuedAt.ToString("dd.MM.yyyy HH:mm")</td><td>@issue.Quantity</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="empty-state">Цю запчастину ще не видавали.</p>
+}
+<a class="btn btn-primary" asp-action="Issue" asp-route-id="@Model.Id">Видати запчастину</a>
+<a asp-action="Index" class="ms-3">Назад до списку</a>

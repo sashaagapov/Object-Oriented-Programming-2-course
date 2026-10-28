@@ -26,7 +26,7 @@ public class SuppliersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Supplier supplier)
+    public async Task<IActionResult> Create([Bind("Name,Phone")] Supplier supplier)
     {
         if (!ModelState.IsValid)
         {

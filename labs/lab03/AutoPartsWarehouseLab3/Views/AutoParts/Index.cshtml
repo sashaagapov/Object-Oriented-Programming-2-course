@@ -1,20 +1,27 @@
 @model IEnumerable<AutoPartsWarehouse.Models.AutoPart>
 
-<h1>@(ViewBag.CriticalOnly ? "Критичні залишки" : "Запчастини")</h1>
+<div class="page-heading">
+    <div>
+        <h1>@(ViewBag.CriticalOnly ? "Критичні залишки" : "Запчастини")</h1>
+        <p class="subtitle">Залишки, сумісність і видача запчастин. Знайдено позицій: @Model.Count().</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">+ Додати запчастину</a>
+</div>
 
-<p><a asp-action="Create">Додати запчастину</a></p>
-
-<form asp-action="Index" method="get" class="mb-3">
+<form asp-action="Index" method="get" class="search-form">
     @if (ViewBag.CriticalOnly)
     {
         <input type="hidden" name="criticalOnly" value="true" />
     }
     <label for="query">Пошук за назвою або виробником</label>
-    <input id="query" name="query" value="@ViewBag.Query" />
+    <div class="search-controls">
+    <input id="query" name="query" value="@ViewBag.Query" placeholder="Наприклад, фільтр або Bosch" />
     <button type="submit">Знайти</button>
     <a asp-action="Index">Скинути</a>
+    </div>
 </form>
 
+<div class="table-responsive">
 <table class="table">
     <thead>
         <tr>
@@ -38,29 +45,35 @@
                 <td>
                     @if (part.QuantityInStock == 0)
                     {
-                        <span>Відсутня</span>
+                        <span class="status status-unavailable">Відсутня</span>
                     }
                     else if (part.QuantityInStock <= part.MinimumStock)
                     {
-                        <span>Критичний залишок</span>
+                        <span class="status status-critical">Критичний залишок</span>
                     }
                     else
                     {
-                        <span>Доступна</span>
+                        <span class="status status-available">Доступна</span>
                     }
                 </td>
                 <td>
+                    <div class="actions">
                     <a asp-action="Details" asp-route-id="@part.Id">Деталі</a>
                     <a asp-action="Edit" asp-route-id="@part.Id">Редагувати</a>
                     <a asp-action="Delete" asp-route-id="@part.Id">Видалити</a>
-                    <a asp-action="Issue" asp-route-id="@part.Id">Видати</a>
+                    @if (part.QuantityInStock > 0)
+                    {
+                        <a asp-action="Issue" asp-route-id="@part.Id">Видати</a>
+                    }
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Запчастин не знайдено.</p>
+    <p class="empty-state">Запчастин не знайдено. Змініть пошук або додайте нову запчастину.</p>
 }

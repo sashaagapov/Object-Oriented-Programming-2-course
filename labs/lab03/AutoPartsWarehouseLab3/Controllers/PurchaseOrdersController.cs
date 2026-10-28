@@ -123,6 +123,7 @@ public class PurchaseOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Receive(int id)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         var order = await _context.PurchaseOrders
             .Include(order => order.Items)
                 .ThenInclude(item => item.AutoPart)
@@ -139,13 +140,25 @@ public class PurchaseOrdersController : Controller
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        foreach (var item in order.Items)
+        var quantities = order.Items.GroupBy(item => item.AutoPartId)
+            .Select(group => new { Part = group.First().AutoPart, Quantity = group.Sum(item => (long)item.Quantity) })
+            .ToList();
+
+        if (order.Items.Count == 0 || order.Items.Any(item => item.Quantity <= 0) ||
+            quantities.Any(row => row.Part.QuantityInStock + row.Quantity > int.MaxValue))
         {
-            item.AutoPart.QuantityInStock += item.Quantity;
+            TempData["Message"] = "Неможливо отримати замовлення: перевірте позиції та допустиму кількість запчастин.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        foreach (var row in quantities)
+        {
+            row.Part.QuantityInStock += (int)row.Quantity;
         }
 
         order.Status = PurchaseOrderStatus.Received;
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
         TempData["Message"] = "Замовлення отримано. Залишки оновлено.";
         return RedirectToAction(nameof(Details), new { id });
     }

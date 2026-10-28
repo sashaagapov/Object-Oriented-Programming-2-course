@@ -9,25 +9,26 @@
     <input type="hidden" asp-for="Id" />
 
     <div>
-        <label>Назва</label>
+        <label asp-for="Name">Назва</label>
         <input asp-for="Name" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div>
-        <label>Виробник</label>
+        <label asp-for="Manufacturer">Виробник</label>
         <input asp-for="Manufacturer" />
         <span asp-validation-for="Manufacturer" class="text-danger"></span>
     </div>
 
     <div>
-        <label>Кількість на складі</label>
+        <label asp-for="QuantityInStock">Кількість на складі</label>
+        <p class="form-hint">Ручне коригування залишку. Для звичайного руху запчастин використовуйте видачу або отримання замовлення; коригування не створює запису історії.</p>
         <input asp-for="QuantityInStock" />
         <span asp-validation-for="QuantityInStock" class="text-danger"></span>
     </div>
 
     <div>
-        <label>Мінімальний залишок</label>
+        <label asp-for="MinimumStock">Мінімальний залишок</label>
         <input asp-for="MinimumStock" />
         <span asp-validation-for="MinimumStock" class="text-danger"></span>
     </div>

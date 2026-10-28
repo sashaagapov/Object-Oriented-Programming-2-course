@@ -15,4 +15,11 @@ public class WarehouseContext : DbContext
     public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
     public DbSet<VehicleModel> VehicleModels { get; set; }
     public DbSet<PartIssue> PartIssues { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<AutoPart>()
+            .HasIndex(part => new { part.Name, part.Manufacturer })
+            .IsUnique();
+    }
 }
