@@ -12,8 +12,8 @@
     <input type="hidden" asp-for="AutoPartId" />
 
     <div>
-        <label>Кількість для видачі</label>
-        <input asp-for="Quantity" />
+        <label asp-for="Quantity">Кількість для видачі</label>
+        <input asp-for="Quantity" min="1" max="@Model.QuantityInStock" />
         <span asp-validation-for="Quantity" class="text-danger"></span>
     </div>
 
@@ -25,7 +25,8 @@
         <span asp-validation-for="IsPaymentConfirmed" class="text-danger"></span>
     </div>
 
-    <button type="submit">Видати</button>
+    <p class="form-hint">Після видачі залишок зменшиться, а операція з'явиться в історії запчастини.</p>
+    <button type="submit" disabled="@(Model.QuantityInStock == 0)">Видати</button>
 </form>
 
 <a asp-action="Index">Назад</a>
