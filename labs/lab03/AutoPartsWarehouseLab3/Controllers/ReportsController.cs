@@ -84,8 +84,21 @@ public class ReportsController : Controller
                 issue.IssuedAt < to.Value.Date.AddDays(1));
         }
 
-        var totalQuantity = await issues
-            .SumAsync(issue => (int?)issue.Quantity) ?? 0;
+        var summary = await issues
+    .GroupBy(issue => new
+    {
+        issue.AutoPartId,
+        issue.AutoPart.Name,
+        issue.AutoPart.Manufacturer
+    })
+    .Select(group => new IssuedPartSummary
+    {
+        PartName = group.Key.Name,
+        Manufacturer = group.Key.Manufacturer,
+        TotalIssued = group.Sum(issue => issue.Quantity)
+    })
+    .OrderBy(item => item.PartName)
+    .ToListAsync();
 
         var result = await issues
             .OrderByDescending(issue => issue.IssuedAt)
@@ -93,8 +106,10 @@ public class ReportsController : Controller
 
         ViewBag.From = from?.ToString("yyyy-MM-dd");
         ViewBag.To = to?.ToString("yyyy-MM-dd");
-        ViewBag.TotalQuantity = totalQuantity;
-
-        return View(result);
+        return View(new IssuedByPeriodViewModel
+        {
+            Issues = result,
+            Summary = summary
+        });
     }
 }

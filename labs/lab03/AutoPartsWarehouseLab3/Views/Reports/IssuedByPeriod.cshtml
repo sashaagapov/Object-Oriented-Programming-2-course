@@ -1,4 +1,4 @@
-@model List<AutoPartsWarehouse.Models.PartIssue>
+@model AutoPartsWarehouse.ViewModels.IssuedByPeriodViewModel
 
 <h1>Видача запчастин за період</h1>
 
@@ -18,27 +18,76 @@
     </button>
 </form>
 
-<h4>Всього видано: @ViewBag.TotalQuantity</h4>
+<h4>Кількість виданих запчастин за період</h4>
+
+<div class="table-responsive mb-4">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Запчастина</th>
+                <th>Виробник</th>
+                <th>Всього видано</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Summary.Any())
+            {
+                @foreach (var item in Model.Summary)
+                {
+                    <tr>
+                        <td>@item.PartName</td>
+                        <td>@item.Manufacturer</td>
+                        <td>@item.TotalIssued</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">
+                        За вибраний період видач немає.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h4>Історія окремих видач</h4>
 
 <div class="table-responsive">
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Запчастина</th>
-            <th>Кількість</th>
-            <th>Дата</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var issue in Model)
-        {
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <td>@issue.AutoPart.Name</td>
-                <td>@issue.Quantity</td>
-                <td>@issue.IssuedAt.ToShortDateString()</td>
+                <th>Запчастина</th>
+                <th>Кількість</th>
+                <th>Дата</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @if (Model.Issues.Any())
+            {
+                @foreach (var issue in Model.Issues)
+                {
+                    <tr>
+                        <td>@issue.AutoPart.Name</td>
+                        <td>@issue.Quantity</td>
+                        <td>@issue.IssuedAt.ToShortDateString()</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">
+                        Записів про видачу немає.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+<a asp-action="Index" class="btn btn-outline-secondary">
+    Назад до звітів
+</a>
