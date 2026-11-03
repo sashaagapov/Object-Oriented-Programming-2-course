@@ -1,4 +1,4 @@
-@{
+﻿@{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     var critical = Context.Request.Query["criticalOnly"] == "true";
 }
@@ -21,6 +21,7 @@
 <a class="nav-link @(critical ? "active" : "")" asp-controller="AutoParts" asp-action="Index" asp-route-criticalOnly="true">Критичні залишки</a>
 <a class="nav-link @(controller == "PurchaseOrders" ? "active" : "")" asp-controller="PurchaseOrders" asp-action="Index">Замовлення</a>
 <a class="nav-link @(controller == "Suppliers" ? "active" : "")" asp-controller="Suppliers" asp-action="Index">Постачальники</a>
+<a class="nav-link @(controller == "Home" ? "active" : "")" asp-controller="Home" asp-action="Contacts">Контакти</a>
 </div></div>
 </nav>
 </header>
