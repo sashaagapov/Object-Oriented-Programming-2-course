@@ -1,0 +1,36 @@
+@model AutoPartsWarehouse.ViewModels.IssuePartViewModel
+
+<h1>Видача запчастини</h1>
+
+<p><strong>Запчастина:</strong> @Model.PartName</p>
+<p><strong>На складі:</strong> @Model.QuantityInStock</p>
+
+<form asp-action="Issue" method="post">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="AutoPartId" />
+
+    <div>
+        <label asp-for="Quantity">Кількість для видачі</label>
+        <input asp-for="Quantity" min="1" max="@Model.QuantityInStock" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>
+            <input asp-for="IsPaymentConfirmed" />
+            Оплату підтверджено
+        </label>
+        <span asp-validation-for="IsPaymentConfirmed" class="text-danger"></span>
+    </div>
+
+    <p class="form-hint">Після видачі залишок зменшиться, а операція з'явиться в історії запчастини.</p>
+    <button type="submit" disabled="@(Model.QuantityInStock == 0)">Видати</button>
+</form>
+
+<a asp-action="Index">Назад</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,9 @@
+@model AutoPartsWarehouse.Models.VehicleModel
+
+<h1>Видалити модель автомобіля</h1>
+<p>Ви дійсно хочете видалити <strong>@Model.Brand @Model.ModelName (@Model.ProductionYear)</strong>?</p>
+<p>Зв'язки сумісності буде видалено, але запчастини залишаться в системі.</p>
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Скасувати</a>
+</form>
