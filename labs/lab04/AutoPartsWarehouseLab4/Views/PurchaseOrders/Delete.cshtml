@@ -1,10 +1,9 @@
 @model AutoPartsWarehouse.Models.PurchaseOrder
-
-<h1>Видалити замовлення №@Model.Id</h1>
-<p>Постачальник: <strong>@Model.Supplier.Name</strong></p>
-<p>Замовлення містить позицій: @Model.Items.Count.</p>
-<p>Видалити можна тільки неотримане замовлення. Залишки запчастин не зміняться.</p>
-<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
-    <button type="submit" class="btn btn-danger">Видалити замовлення</button>
-    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Скасувати</a>
+<h1>Анулювати замовлення №@Model.Id</h1>
+<p>Постачальник: @Model.Supplier.Name. Залишки не зміняться, історію буде збережено.</p>
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Анулювати замовлення?')">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <label for="reason">Причина анулювання</label><input id="reason" name="reason" required maxlength="500" />
+    <button type="submit" class="btn btn-danger">Анулювати замовлення</button>
+    <a asp-action="Details" asp-route-id="@Model.Id">Назад</a>
 </form>

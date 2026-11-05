@@ -1,0 +1,33 @@
+@model List<AutoPartsWarehouse.ViewModels.AdminUserRow>
+<h1>Користувачі</h1>
+<p><a class="btn btn-primary" asp-action="Create">Створити обліковий запис</a></p>
+<div class="table-responsive"><table class="table">
+    <thead><tr><th>Ім'я</th><th>Пошта</th><th>Роль</th><th>Стан</th><th>Дії</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        var locked = row.User.LockoutEnd > DateTimeOffset.UtcNow;
+        <tr>
+            <td>@row.User.DisplayName</td><td>@row.User.Email</td><td>@row.Role</td><td>@(locked ? "Заблоковано" : "Активний")</td>
+            <td>
+                @if (row.User.Id != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                {
+                    <form asp-action="ChangeRole" method="post" class="d-inline-flex gap-1" onsubmit="return confirm('Змінити роль користувача?')">
+                        <input type="hidden" name="id" value="@row.User.Id" />
+                        <select name="role" class="form-select form-select-sm">
+                            <option value="Administrator" selected="@(row.Role == "Administrator")">Адміністратор</option>
+                            <option value="Manager" selected="@(row.Role == "Manager")">Менеджер</option>
+                            <option value="WarehouseWorker" selected="@(row.Role == "WarehouseWorker")">Комірник</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Змінити роль</button>
+                    </form>
+                    <form asp-action="SetLocked" method="post" class="d-inline" onsubmit="return confirm('Змінити стан облікового запису?')">
+                        <input type="hidden" name="id" value="@row.User.Id" /><input type="hidden" name="locked" value="@(!locked)" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">@(locked ? "Розблокувати" : "Заблокувати")</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table></div>

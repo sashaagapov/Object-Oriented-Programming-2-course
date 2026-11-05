@@ -6,5 +6,5 @@ public class ManufacturerStockViewModel
 
     public int PartCount { get; set; }
 
-    public int TotalQuantity { get; set; }
+    public int CriticalPartCount { get; set; }
 }

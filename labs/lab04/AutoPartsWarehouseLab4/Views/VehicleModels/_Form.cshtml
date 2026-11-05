@@ -21,7 +21,7 @@
     <div class="mb-3">
         <label asp-for="SelectedAutoPartIds" class="form-label">Сумісні запчастини</label>
         <select asp-for="SelectedAutoPartIds" asp-items="Model.AutoParts" multiple size="8" class="form-select"></select>
-        <div class="form-text">Утримуйте Ctrl, щоб вибрати кілька запчастин.</div>
+        <div class="form-text">Утримуйте Command на Mac або Ctrl у Windows, щоб вибрати кілька запчастин.</div>
     </div>
     <button type="submit" class="btn btn-primary">Зберегти</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Скасувати</a>

@@ -2,7 +2,8 @@
 
 <h1>Моделі автомобілів</h1>
 <p class="subtitle">Керуйте сумісністю моделей автомобілів із запчастинами.</p>
-<p><a class="btn btn-primary" asp-action="Create">+ Додати модель</a></p>
+@if (User.IsInRole(WarehouseRoles.Manager))
+{ <p><a class="btn btn-primary" asp-action="Create">+ Додати модель</a></p> }
 
 <div class="table-responsive">
     <table class="table">
@@ -16,8 +17,11 @@
                 <td>@vehicle.ProductionYear</td>
                 <td>@vehicle.AutoParts.Count</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@vehicle.Id">Редагувати</a>
-                    <a asp-action="Delete" asp-route-id="@vehicle.Id" class="ms-2">Видалити</a>
+                    @if (User.IsInRole(WarehouseRoles.Manager))
+                    {
+                        <a asp-action="Edit" asp-route-id="@vehicle.Id">Редагувати</a>
+                        <a asp-action="Delete" asp-route-id="@vehicle.Id" class="ms-2">Видалити</a>
+                    }
                 </td>
             </tr>
         }

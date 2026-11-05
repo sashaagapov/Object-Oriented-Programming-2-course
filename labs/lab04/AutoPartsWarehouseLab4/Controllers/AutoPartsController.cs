@@ -3,8 +3,11 @@ using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsWarehouse.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace AutoPartsWarehouse.Controllers;
 
+[Authorize(Roles = WarehouseRoles.Staff)]
 public class AutoPartsController : Controller
 {
     private readonly WarehouseContext _context;
@@ -35,13 +38,15 @@ public class AutoPartsController : Controller
         return View(await autoParts.OrderBy(part => part.Name).ToListAsync());
     }
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public IActionResult Create()
     {
         return View();
     }
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,Manufacturer,QuantityInStock,MinimumStock")] AutoPart autoPart)
+    public async Task<IActionResult> Create([Bind("Name,Manufacturer,MinimumStock")] AutoPart autoPart)
     {
         NormalizeNameAndManufacturer(autoPart);
 
@@ -71,6 +76,7 @@ public class AutoPartsController : Controller
         return RedirectToAction(nameof(Index));
     }
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Edit(int id)
     {
         var autoPart = await _context.AutoParts.FindAsync(id);
@@ -83,8 +89,9 @@ public class AutoPartsController : Controller
         return View(autoPart);
     }
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Manufacturer,QuantityInStock,MinimumStock")] AutoPart autoPart)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Manufacturer,MinimumStock")] AutoPart autoPart)
     {
         if (id != autoPart.Id)
         {
@@ -112,7 +119,6 @@ public class AutoPartsController : Controller
 
         existingPart.Name = autoPart.Name;
         existingPart.Manufacturer = autoPart.Manufacturer;
-        existingPart.QuantityInStock = autoPart.QuantityInStock;
         existingPart.MinimumStock = autoPart.MinimumStock;
         try
         {
@@ -151,6 +157,7 @@ public class AutoPartsController : Controller
         return exception.InnerException is SqliteException { SqliteErrorCode: 19 };
     }
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Delete(int id)
     {
         var autoPart = await _context.AutoParts
@@ -164,6 +171,7 @@ public class AutoPartsController : Controller
         return View(autoPart);
     }
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
@@ -175,6 +183,7 @@ public class AutoPartsController : Controller
         }
 
         if (await _context.PartIssues.AnyAsync(issue => issue.AutoPartId == id) ||
+            await _context.StockAdjustments.AnyAsync(adjustment => adjustment.AutoPartId == id) ||
             await _context.PurchaseOrderItems.AnyAsync(item => item.AutoPartId == id))
         {
             ModelState.AddModelError(string.Empty,
@@ -193,6 +202,7 @@ public class AutoPartsController : Controller
         var autoPart = await _context.AutoParts
             .Include(part => part.VehicleModels)
             .Include(part => part.PartIssues)
+            .Include(part => part.StockAdjustments)
             .FirstOrDefaultAsync(part => part.Id == id);
 
         if (autoPart == null)
@@ -200,114 +210,222 @@ public class AutoPartsController : Controller
             return NotFound();
         }
 
+        ViewBag.UserNames = await _context.Users.ToDictionaryAsync(user => user.Id, user => user.DisplayName);
         return View(autoPart);
     }
+    [Authorize(Roles = WarehouseRoles.Staff)]
+    public async Task<IActionResult> Issues()
+    {
+        var issues = await _context.PartIssues.Include(issue => issue.AutoPart)
+            .OrderByDescending(issue => issue.CreatedAt).ThenByDescending(issue => issue.Id).ToListAsync();
+        ViewBag.UserNames = await _context.Users.ToDictionaryAsync(user => user.Id, user => user.DisplayName);
+        return View(issues);
+    }
+
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
     public async Task<IActionResult> Issue(int id)
     {
-        var autoPart = await _context.AutoParts.FindAsync(id);
-
-        if (autoPart == null)
-        {
-            return NotFound();
-        }
-
-        var viewModel = new IssuePartViewModel
-        {
-            AutoPartId = autoPart.Id,
-            PartName = autoPart.Name,
-            QuantityInStock = autoPart.QuantityInStock,
-            Quantity = 1
-        };
-
-        return View(viewModel);
+        var part = await _context.AutoParts.FindAsync(id);
+        if (part == null) return NotFound();
+        return View(new IssuePartViewModel { AutoPartId = id, PartName = part.Name, QuantityInStock = part.QuantityInStock, Quantity = 1 });
     }
+
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Issue(IssuePartViewModel viewModel)
+    public async Task<IActionResult> Issue(IssuePartViewModel model)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        var autoPart = await _context.AutoParts.FindAsync(viewModel.AutoPartId);
-
-        if (autoPart == null)
-        {
-            return NotFound();
-        }
-
-        if (viewModel.Quantity <= 0)
-        {
-            ModelState.AddModelError(
-                nameof(viewModel.Quantity),
-                "Кількість повинна бути більшою за 0."
-            );
-        }
-
-        if (viewModel.Quantity > autoPart.QuantityInStock)
-        {
-            ModelState.AddModelError(
-                nameof(viewModel.Quantity),
-                "На складі недостатньо запчастин."
-            );
-        }
-
-        if (!viewModel.IsPaymentConfirmed)
-        {
-            ModelState.AddModelError(
-                nameof(viewModel.IsPaymentConfirmed),
-                "Оплата повинна бути підтверджена."
-            );
-        }
-
+        var part = await _context.AutoParts.FindAsync(model.AutoPartId);
+        if (part == null) return NotFound();
+        if (model.Quantity <= 0) ModelState.AddModelError(nameof(model.Quantity), "Кількість має бути більшою за нуль.");
         if (!ModelState.IsValid)
         {
-            viewModel.PartName = autoPart.Name;
-            viewModel.QuantityInStock = autoPart.QuantityInStock;
-
-            return View(viewModel);
+            model.PartName = part.Name;
+            model.QuantityInStock = part.QuantityInStock;
+            return View(model);
         }
-
-        var partIssue = new PartIssue
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        _context.PartIssues.Add(new PartIssue
         {
-            AutoPartId = autoPart.Id,
-            Quantity = viewModel.Quantity,
-            IssuedAt = DateTime.Now
-        };
-
-        autoPart.QuantityInStock -= viewModel.Quantity;
-
-        _context.PartIssues.Add(partIssue);
-
+            AutoPartId = part.Id,
+            Quantity = model.Quantity,
+            Status = PartIssueStatus.Pending,
+            CreatedAt = DateTime.UtcNow,
+            CreatedByUserId = actor
+        });
         await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
-
-        return RedirectToAction(nameof(Index));
+        TempData["Success"] = "Майбутню видачу оформлено. Залишок не змінено.";
+        return RedirectToAction(nameof(Issues));
     }
 
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CancelIssue(int id)
+    public async Task<IActionResult> ConfirmPayment(int id)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
-        var issue = await _context.PartIssues
-            .Include(item => item.AutoPart)
-            .FirstOrDefaultAsync(item => item.Id == id);
-        if (issue == null)
+        var issue = await _context.PartIssues.FindAsync(id);
+        if (issue == null) return NotFound();
+        if (issue.Status != PartIssueStatus.Pending || issue.IsPaymentConfirmed)
         {
-            return NotFound();
+            TempData["Error"] = "Оплату можна підтвердити лише один раз для очікуваної видачі.";
+            return RedirectToAction(nameof(Issues));
         }
-
-        if (issue.AutoPart.QuantityInStock > int.MaxValue - issue.Quantity)
-        {
-            TempData["Error"] = "Скасування неможливе: кількість на складі перевищить допустиме значення.";
-            return RedirectToAction(nameof(Details), new { id = issue.AutoPartId });
-        }
-
-        var autoPartId = issue.AutoPartId;
-        issue.AutoPart.QuantityInStock += issue.Quantity;
-        _context.PartIssues.Remove(issue);
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        issue.IsPaymentConfirmed = true;
+        issue.PaymentConfirmedAt = DateTime.UtcNow;
+        issue.PaymentConfirmedByUserId = actor;
         await _context.SaveChangesAsync();
         await transaction.CommitAsync();
-        TempData["Success"] = "Видачу скасовано, залишок запчастини відновлено.";
-        return RedirectToAction(nameof(Details), new { id = autoPartId });
+        TempData["Success"] = "Оплату підтверджено менеджером.";
+        return RedirectToAction(nameof(Issues));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CompleteIssue(int id)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        var issue = await _context.PartIssues.Include(item => item.AutoPart).FirstOrDefaultAsync(item => item.Id == id);
+        if (issue == null) return NotFound();
+        if (issue.Status != PartIssueStatus.Pending || !issue.IsPaymentConfirmed)
+        {
+            TempData["Error"] = "Видати можна тільки очікуваний документ із підтвердженою оплатою.";
+            return RedirectToAction(nameof(Issues));
+        }
+        if (issue.Quantity <= 0 || issue.Quantity > issue.AutoPart.QuantityInStock)
+        {
+            TempData["Error"] = "Недостатній залишок для фактичної видачі.";
+            return RedirectToAction(nameof(Issues));
+        }
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        issue.AutoPart.QuantityInStock -= issue.Quantity;
+        issue.Status = PartIssueStatus.Issued;
+        issue.IssuedAt = DateTime.UtcNow;
+        issue.IssuedByUserId = actor;
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        TempData["Success"] = "Запчастину фактично видано. Залишок зменшено.";
+        return RedirectToAction(nameof(Issues));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CancelIssue(int id, string reason)
+    {
+        reason = (reason ?? string.Empty).Trim();
+        if (reason.Length == 0 || reason.Length > 500)
+        {
+            TempData["Error"] = "Вкажіть причину анулювання (до 500 символів).";
+            return RedirectToAction(nameof(Issues));
+        }
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        var issue = await _context.PartIssues.FindAsync(id);
+        if (issue == null) return NotFound();
+        if (issue.Status != PartIssueStatus.Pending)
+        {
+            TempData["Error"] = "Анулювати можна лише очікувану видачу.";
+            return RedirectToAction(nameof(Issues));
+        }
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        issue.Status = PartIssueStatus.Cancelled;
+        issue.CancelledAt = DateTime.UtcNow;
+        issue.CancelledByUserId = actor;
+        issue.CancellationReason = reason;
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        TempData["Success"] = "Очікувану видачу анульовано без зміни залишку.";
+        return RedirectToAction(nameof(Issues));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ReturnIssue(int id, string reason)
+    {
+        reason = (reason ?? string.Empty).Trim();
+        if (reason.Length == 0 || reason.Length > 500)
+        {
+            TempData["Error"] = "Вкажіть причину повернення (до 500 символів).";
+            return RedirectToAction(nameof(Issues));
+        }
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        var issue = await _context.PartIssues.Include(item => item.AutoPart).FirstOrDefaultAsync(item => item.Id == id);
+        if (issue == null) return NotFound();
+        if (issue.Status != PartIssueStatus.Issued)
+        {
+            TempData["Error"] = "Повернути можна лише фактично видану запчастину.";
+            return RedirectToAction(nameof(Issues));
+        }
+        if ((long)issue.AutoPart.QuantityInStock + issue.Quantity > int.MaxValue)
+        {
+            TempData["Error"] = "Повернення перевищить допустимий залишок.";
+            return RedirectToAction(nameof(Issues));
+        }
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        issue.AutoPart.QuantityInStock += issue.Quantity;
+        issue.Status = PartIssueStatus.Returned;
+        issue.ReturnedAt = DateTime.UtcNow;
+        issue.ReturnedByUserId = actor;
+        issue.ReturnReason = reason;
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        TempData["Success"] = "Повернення оформлено. Залишок відновлено.";
+        return RedirectToAction(nameof(Issues));
+    }
+
+    [HttpGet]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
+    public async Task<IActionResult> AdjustStock(int id)
+    {
+        var part = await _context.AutoParts.FindAsync(id);
+        if (part == null) return NotFound();
+        return View(new StockAdjustmentInput { AutoPartId = id, PartName = part.Name, QuantityInStock = part.QuantityInStock });
+    }
+
+    [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AdjustStock(StockAdjustmentInput model)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        var part = await _context.AutoParts.FindAsync(model.AutoPartId);
+        if (part == null) return NotFound();
+        model.Reason = (model.Reason ?? string.Empty).Trim();
+        if (model.Delta == 0) ModelState.AddModelError(nameof(model.Delta), "Зміна кількості не може бути нульовою.");
+        if (model.Reason.Length == 0 || model.Reason.Length > 500) ModelState.AddModelError(nameof(model.Reason), "Вкажіть причину до 500 символів.");
+        var after = (long)part.QuantityInStock + model.Delta;
+        if (after < 0 || after > int.MaxValue) ModelState.AddModelError(nameof(model.Delta), "Результат має бути від 0 до максимальної кількості.");
+        if (!ModelState.IsValid)
+        {
+            model.PartName = part.Name;
+            model.QuantityInStock = part.QuantityInStock;
+            return View(model);
+        }
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        _context.StockAdjustments.Add(new StockAdjustment
+        {
+            AutoPartId = part.Id,
+            Delta = model.Delta,
+            QuantityBefore = part.QuantityInStock,
+            QuantityAfter = (int)after,
+            Reason = model.Reason,
+            OccurredAt = DateTime.UtcNow,
+            PerformedByUserId = actor
+        });
+        part.QuantityInStock = (int)after;
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        TempData["Success"] = "Інвентаризаційне коригування збережено.";
+        return RedirectToAction(nameof(Details), new { id = part.Id });
     }
 }

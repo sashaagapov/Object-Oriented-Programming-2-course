@@ -4,7 +4,8 @@ public enum PurchaseOrderStatus
 {
     Created,
     Ordered,
-    Received
+    Received,
+    Cancelled
 }
 
 public class PurchaseOrder
@@ -14,6 +15,9 @@ public class PurchaseOrder
     public DateTime OrderDate { get; set; } = DateTime.Now;
 
     public PurchaseOrderStatus Status { get; set; } = PurchaseOrderStatus.Created;
+    public DateTime? CancelledAt { get; set; }
+    public string? CancelledByUserId { get; set; }
+    public string? CancellationReason { get; set; }
 
     public int SupplierId { get; set; }
 

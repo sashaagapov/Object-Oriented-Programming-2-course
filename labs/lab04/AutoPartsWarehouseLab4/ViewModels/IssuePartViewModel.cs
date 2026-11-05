@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace AutoPartsWarehouse.ViewModels;
 
@@ -11,7 +12,6 @@ public class IssuePartViewModel
 
     public int QuantityInStock { get; set; }
 
+    [Range(1, int.MaxValue, ErrorMessage = "Кількість має бути більшою за нуль.")]
     public int Quantity { get; set; }
-
-    public bool IsPaymentConfirmed { get; set; }
 }

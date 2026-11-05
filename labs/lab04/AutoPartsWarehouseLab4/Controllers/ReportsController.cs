@@ -2,8 +2,10 @@ using AutoPartsWarehouse.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsWarehouse.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 namespace AutoPartsWarehouse.Controllers;
 
+[Authorize(Roles = WarehouseRoles.Manager)]
 public class ReportsController : Controller
 {
     private readonly WarehouseContext _context;
@@ -49,7 +51,7 @@ public class ReportsController : Controller
             {
                 Manufacturer = group.Key,
                 PartCount = group.Count(),
-                TotalQuantity = group.Sum(part => part.QuantityInStock)
+                CriticalPartCount = group.Count(part => part.QuantityInStock > 0 && part.QuantityInStock <= part.MinimumStock)
             })
             .OrderBy(item => item.Manufacturer)
             .ToListAsync();
@@ -69,32 +71,20 @@ public class ReportsController : Controller
     }
     public async Task<IActionResult> IssuedByPeriod(DateTime? from, DateTime? to)
     {
-        var issues = _context.PartIssues
-            .Include(issue => issue.AutoPart)
-            .AsQueryable();
-
-        if (from.HasValue)
-        {
-            issues = issues.Where(issue => issue.IssuedAt >= from.Value);
-        }
-
-        if (to.HasValue)
-        {
-            issues = issues.Where(issue =>
-                issue.IssuedAt < to.Value.Date.AddDays(1));
-        }
-
-        var totalQuantity = await issues
-            .SumAsync(issue => (int?)issue.Quantity) ?? 0;
-
-        var result = await issues
-            .OrderByDescending(issue => issue.IssuedAt)
-            .ToListAsync();
-
+        var fromUtc = from?.Date.ToUniversalTime();
+        var toUtc = to?.Date.AddDays(1).ToUniversalTime();
+        var all = await _context.PartIssues.Include(i => i.AutoPart).ToListAsync();
+        bool InPeriod(DateTime? date) => date.HasValue && (!fromUtc.HasValue || date.Value >= fromUtc.Value) && (!toUtc.HasValue || date.Value < toUtc.Value);
+        var summary = all.GroupBy(i => new { i.AutoPartId, i.AutoPart.Name, i.AutoPart.Manufacturer })
+            .Select(g => new IssuedPartSummary
+            {
+                PartName = g.Key.Name, Manufacturer = g.Key.Manufacturer,
+                TotalIssued = g.Where(i => (i.Status == PartIssueStatus.Issued || i.Status == PartIssueStatus.Returned || i.Status == PartIssueStatus.LegacyIssued) && InPeriod(i.IssuedAt)).Sum(i => i.Quantity),
+                TotalReturned = g.Where(i => i.Status == PartIssueStatus.Returned && InPeriod(i.ReturnedAt)).Sum(i => i.Quantity)
+            }).Where(s => s.TotalIssued != 0 || s.TotalReturned != 0).OrderBy(s => s.PartName).ToList();
+        var history = all.Where(i => InPeriod(i.CreatedAt)).OrderByDescending(i => i.CreatedAt).ToList();
         ViewBag.From = from?.ToString("yyyy-MM-dd");
         ViewBag.To = to?.ToString("yyyy-MM-dd");
-        ViewBag.TotalQuantity = totalQuantity;
-
-        return View(result);
+        return View(new IssuedByPeriodViewModel { Issues = history, Summary = summary });
     }
 }

@@ -8,7 +8,7 @@
         <tr>
             <th>Виробник</th>
             <th>Кількість видів запчастин</th>
-            <th>Загальна кількість на складі</th>
+            <th>Найменувань із критично малим залишком (більше 0)</th>
         </tr>
     </thead>
 
@@ -18,7 +18,7 @@
             <tr>
                 <td>@item.Manufacturer</td>
                 <td>@item.PartCount</td>
-                <td>@item.TotalQuantity</td>
+                <td>@item.CriticalPartCount</td>
             </tr>
         }
     </tbody>

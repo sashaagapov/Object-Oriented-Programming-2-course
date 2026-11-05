@@ -23,6 +23,7 @@
                     <option value="">Виберіть запчастину</option>
                 </select>
                 <input asp-for="Items[i].Quantity" type="number" min="1" placeholder="Кількість" />
+                <button type="button" class="remove-item btn btn-sm btn-outline-danger">Вилучити позицію</button>
             </div>
         }
     </div>
@@ -40,6 +41,7 @@
             }
         </select>
         <input name="Items[__index__].Quantity" type="number" min="1" placeholder="Кількість" />
+        <button type="button" class="remove-item btn btn-sm btn-outline-danger">Вилучити позицію</button>
     </div>
 </template>
 
@@ -48,11 +50,17 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        let itemIndex = @Model.Items.Count;
+        const items = document.getElementById('order-items');
+        function reindex() {
+            Array.from(items.children).forEach((row, index) => row.querySelectorAll('[name]').forEach(field => {
+                field.name = field.name.replace(/Items\[\d+\]/, `Items[${index}]`);
+            }));
+        }
         document.getElementById('add-item').addEventListener('click', function () {
-            const template = document.getElementById('item-template').innerHTML;
-            document.getElementById('order-items').insertAdjacentHTML(
-                'beforeend', template.replaceAll('__index__', itemIndex++));
+            items.insertAdjacentHTML('beforeend', document.getElementById('item-template').innerHTML.replaceAll('__index__', items.children.length));
+        });
+        items.addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-item')) { event.target.closest('#order-items > div').remove(); reindex(); }
         });
     </script>
 }

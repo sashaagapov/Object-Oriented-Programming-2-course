@@ -25,6 +25,7 @@
                 <div class="col-md-4">
                     <input asp-for="Items[i].Quantity" type="number" min="1" placeholder="Кількість" class="form-control" />
                 </div>
+                <div class="col-12"><button type="button" class="remove-item btn btn-sm btn-outline-danger">Вилучити позицію</button></div>
             </div>
         }
     </div>
@@ -37,16 +38,24 @@
     <div class="row g-2 mb-2">
         <div class="col-md-8"><select name="Items[__index__].AutoPartId" class="form-select"><option value="">Виберіть запчастину</option>@foreach (var part in Model.AutoParts) { <option value="@part.Value">@part.Text</option> }</select></div>
         <div class="col-md-4"><input name="Items[__index__].Quantity" type="number" min="1" placeholder="Кількість" class="form-control" /></div>
+        <div class="col-12"><button type="button" class="remove-item btn btn-sm btn-outline-danger">Вилучити позицію</button></div>
     </div>
 </template>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        let itemIndex = @Model.Items.Count;
+        const items = document.getElementById('order-items');
+        function reindex() {
+            Array.from(items.children).forEach((row, index) => row.querySelectorAll('[name]').forEach(field => {
+                field.name = field.name.replace(/Items\[\d+\]/, `Items[${index}]`);
+            }));
+        }
         document.getElementById('add-item').addEventListener('click', function () {
-            document.getElementById('order-items').insertAdjacentHTML('beforeend',
-                document.getElementById('item-template').innerHTML.replaceAll('__index__', itemIndex++));
+            items.insertAdjacentHTML('beforeend', document.getElementById('item-template').innerHTML.replaceAll('__index__', items.children.length));
+        });
+        items.addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-item')) { event.target.closest('#order-items > div').remove(); reindex(); }
         });
     </script>
 }
