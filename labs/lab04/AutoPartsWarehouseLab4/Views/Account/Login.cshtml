@@ -1,0 +1,10 @@
+@model AutoPartsWarehouse.ViewModels.LoginViewModel
+<h1>Вхід до системи</h1>
+<form asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" method="post" class="col-md-5">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label asp-for="Email" class="form-label">Електронна пошта</label><input asp-for="Email" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Password" class="form-label">Пароль</label><input asp-for="Password" class="form-control" /></div>
+    <div class="mb-3"><label><input asp-for="RememberMe" /> Запам'ятати мене</label></div>
+    <button type="submit" class="btn btn-primary">Увійти</button>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

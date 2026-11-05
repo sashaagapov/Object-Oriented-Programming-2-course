@@ -3,9 +3,12 @@ using AutoPartsWarehouse.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AutoPartsWarehouse.Controllers;
 
+[Authorize(Roles = WarehouseRoles.Staff)]
 public class PurchaseOrdersController : Controller
 {
     private readonly WarehouseContext _context;
@@ -43,6 +46,7 @@ public class PurchaseOrdersController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Create()
     {
         var model = new CreatePurchaseOrderViewModel
@@ -57,6 +61,7 @@ public class PurchaseOrdersController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreatePurchaseOrderViewModel model)
     {
@@ -120,6 +125,7 @@ public class PurchaseOrdersController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Edit(int id)
     {
         var order = await _context.PurchaseOrders
@@ -130,9 +136,9 @@ public class PurchaseOrdersController : Controller
             return NotFound();
         }
 
-        if (order.Status == PurchaseOrderStatus.Received)
+        if (order.Status is PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled)
         {
-            TempData["Message"] = "Отримане замовлення редагувати не можна, оскільки його кількість уже додана на склад.";
+            TempData["Message"] = "Отримане або анульоване замовлення редагувати не можна.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -151,9 +157,11 @@ public class PurchaseOrdersController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, EditPurchaseOrderViewModel model)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         if (id != model.Id)
         {
             return BadRequest();
@@ -167,9 +175,9 @@ public class PurchaseOrdersController : Controller
             return NotFound();
         }
 
-        if (order.Status == PurchaseOrderStatus.Received)
+        if (order.Status is PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled)
         {
-            TempData["Message"] = "Отримане замовлення редагувати не можна.";
+            TempData["Message"] = "Отримане або анульоване замовлення редагувати не можна.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -188,11 +196,13 @@ public class PurchaseOrdersController : Controller
             Quantity = item.Quantity!.Value
         }).ToList();
         await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
         TempData["Success"] = "Замовлення оновлено.";
         return RedirectToAction(nameof(Details), new { id });
     }
 
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Delete(int id)
     {
         var order = await _context.PurchaseOrders
@@ -205,9 +215,9 @@ public class PurchaseOrdersController : Controller
             return NotFound();
         }
 
-        if (order.Status == PurchaseOrderStatus.Received)
+        if (order.Status is PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled)
         {
-            TempData["Message"] = "Отримане замовлення видалити не можна, оскільки воно вже вплинуло на залишки.";
+            TempData["Message"] = "Отримане або анульоване замовлення змінити не можна.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -215,10 +225,13 @@ public class PurchaseOrdersController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    public async Task<IActionResult> DeleteConfirmed(int id, string reason)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         var order = await _context.PurchaseOrders
+            .Include(order => order.Supplier)
             .Include(order => order.Items)
             .FirstOrDefaultAsync(order => order.Id == id);
         if (order == null)
@@ -226,20 +239,32 @@ public class PurchaseOrdersController : Controller
             return NotFound();
         }
 
-        if (order.Status == PurchaseOrderStatus.Received)
+        if (order.Status is PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled)
         {
-            TempData["Message"] = "Отримане замовлення видалити не можна.";
+            TempData["Message"] = "Отримане або анульоване замовлення змінити не можна.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        _context.PurchaseOrderItems.RemoveRange(order.Items);
-        _context.PurchaseOrders.Remove(order);
+        reason = (reason ?? string.Empty).Trim();
+        if (reason.Length == 0 || reason.Length > 500)
+        {
+            ModelState.AddModelError(string.Empty, "Вкажіть причину анулювання до 500 символів.");
+            return View("Delete", order);
+        }
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        order.Status = PurchaseOrderStatus.Cancelled;
+        order.CancelledAt = DateTime.UtcNow;
+        order.CancelledByUserId = actor;
+        order.CancellationReason = reason;
         await _context.SaveChangesAsync();
-        TempData["Success"] = "Неотримане замовлення видалено.";
+        await transaction.CommitAsync();
+        TempData["Success"] = "Замовлення анульовано, історію збережено.";
         return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Receive(int id)
     {
@@ -254,9 +279,9 @@ public class PurchaseOrdersController : Controller
             return NotFound();
         }
 
-        if (order.Status == PurchaseOrderStatus.Received)
+        if (order.Status is PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled)
         {
-            TempData["Message"] = "Це замовлення вже отримано.";
+            TempData["Message"] = "Це замовлення вже отримано або анульовано.";
             return RedirectToAction(nameof(Details), new { id });
         }
 

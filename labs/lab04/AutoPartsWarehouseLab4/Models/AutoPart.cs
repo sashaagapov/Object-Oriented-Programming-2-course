@@ -25,4 +25,6 @@ public class AutoPart
     = new List<VehicleModel>();
     public ICollection<PartIssue> PartIssues { get; set; }
     = new List<PartIssue>();
+    public ICollection<StockAdjustment> StockAdjustments { get; set; }
+    = new List<StockAdjustment>();
 }

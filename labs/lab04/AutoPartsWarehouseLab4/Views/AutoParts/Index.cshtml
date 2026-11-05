@@ -5,7 +5,8 @@
         <h1>@(ViewBag.CriticalOnly ? "Критичні залишки" : "Запчастини")</h1>
         <p class="subtitle">Залишки, сумісність і видача запчастин. Знайдено позицій: @Model.Count().</p>
     </div>
-    <a class="btn btn-primary" asp-action="Create">+ Додати запчастину</a>
+    @if (User.IsInRole(WarehouseRoles.Manager))
+    { <a class="btn btn-primary" asp-action="Create">+ Додати запчастину</a> }
 </div>
 
 <form asp-action="Index" method="get" class="search-form">
@@ -59,11 +60,15 @@
                 <td>
                     <div class="actions">
                     <a asp-action="Details" asp-route-id="@part.Id">Деталі</a>
-                    <a asp-action="Edit" asp-route-id="@part.Id">Редагувати</a>
-                    <a asp-action="Delete" asp-route-id="@part.Id">Видалити</a>
-                    @if (part.QuantityInStock > 0)
+                    @if (User.IsInRole(WarehouseRoles.Manager))
                     {
-                        <a asp-action="Issue" asp-route-id="@part.Id">Видати</a>
+                        <a asp-action="Edit" asp-route-id="@part.Id">Редагувати</a>
+                        <a asp-action="Delete" asp-route-id="@part.Id">Видалити</a>
+                    }
+                    @if (User.IsInRole(WarehouseRoles.WarehouseWorker))
+                    {
+                        <a asp-action="Issue" asp-route-id="@part.Id">Оформити видачу</a>
+                        <a asp-action="AdjustStock" asp-route-id="@part.Id">Коригувати</a>
                     }
                     </div>
                 </td>

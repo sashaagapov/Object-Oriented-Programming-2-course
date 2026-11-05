@@ -3,9 +3,11 @@ using AutoPartsWarehouse.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AutoPartsWarehouse.Controllers;
 
+[Authorize(Roles = WarehouseRoles.Staff)]
 public class VehicleModelsController : Controller
 {
     private readonly WarehouseContext _context;
@@ -24,6 +26,7 @@ public class VehicleModelsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Create()
     {
         var model = new VehicleModelViewModel();
@@ -32,6 +35,7 @@ public class VehicleModelsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(VehicleModelViewModel model)
     {
@@ -60,6 +64,7 @@ public class VehicleModelsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Edit(int id)
     {
         var vehicleModel = await _context.VehicleModels
@@ -83,6 +88,7 @@ public class VehicleModelsController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, VehicleModelViewModel model)
     {
@@ -125,6 +131,7 @@ public class VehicleModelsController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     public async Task<IActionResult> Delete(int id)
     {
         var vehicleModel = await _context.VehicleModels
@@ -134,6 +141,7 @@ public class VehicleModelsController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
+    [Authorize(Roles = WarehouseRoles.Manager)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {

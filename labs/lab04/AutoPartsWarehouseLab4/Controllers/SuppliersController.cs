@@ -1,9 +1,11 @@
 using AutoPartsWarehouse.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AutoPartsWarehouse.Controllers;
 
+[Authorize(Roles = WarehouseRoles.Manager)]
 public class SuppliersController : Controller
 {
     private readonly WarehouseContext _context;

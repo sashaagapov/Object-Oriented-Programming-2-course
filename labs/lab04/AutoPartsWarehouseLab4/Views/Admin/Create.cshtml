@@ -1,0 +1,14 @@
+@model AutoPartsWarehouse.ViewModels.AdminCreateUserViewModel
+<h1>Створити обліковий запис</h1>
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label asp-for="DisplayName" class="form-label">Ім'я</label><input asp-for="DisplayName" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Email" class="form-label">Пошта</label><input asp-for="Email" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Password" class="form-label">Початковий пароль</label><input asp-for="Password" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Role" class="form-label">Роль</label><select asp-for="Role" class="form-select">
+        <option value="">Виберіть роль</option><option value="Administrator">Адміністратор</option>
+        <option value="Manager">Менеджер</option><option value="WarehouseWorker">Комірник</option>
+    </select></div>
+    <button type="submit" class="btn btn-primary">Створити</button>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

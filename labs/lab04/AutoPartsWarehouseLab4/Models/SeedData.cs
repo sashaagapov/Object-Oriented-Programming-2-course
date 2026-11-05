@@ -261,6 +261,11 @@ public static class SeedData
         }
     };
 
+            foreach (var issue in issues)
+            {
+                issue.CreatedAt = issue.IssuedAt!.Value;
+                issue.Status = PartIssueStatus.LegacyIssued;
+            }
             context.PartIssues.AddRange(issues);
             context.SaveChanges();
         }
