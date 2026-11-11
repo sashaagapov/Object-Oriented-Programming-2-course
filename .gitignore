@@ -19,3 +19,6 @@ Thumbs.db
 .env.*
 !.env.example
 *.log
+
+# Local archives
+*.zip
