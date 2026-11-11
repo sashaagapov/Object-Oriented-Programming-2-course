@@ -53,6 +53,10 @@
 
     <div class="container workspace">
         <p class="eyebrow">ОБЛІК ЗАПЧАСТИН / СКЛАД</p>
+        @if (User.IsInRole(WarehouseRoles.Manager))
+        {
+            @await Component.InvokeAsync("CriticalStockBanner")
+        }
         <main id="main-content">
             @if (TempData["Success"] is string message)
             {

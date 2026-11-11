@@ -33,7 +33,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
     if (isNewDatabase) SeedData.Initialize(context);
 }
-await IdentitySeed.InitializeAsync(app.Services, app.Environment);
+await IdentitySeed.InitializeAsync(app.Services, app.Environment, app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

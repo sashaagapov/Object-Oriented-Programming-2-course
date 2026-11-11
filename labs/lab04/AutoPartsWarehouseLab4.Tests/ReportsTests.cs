@@ -111,18 +111,22 @@ public class ReportsTests : IDisposable
     }
 
     [Fact]
-    public async Task CriticalStock_ExcludesZeroStock_AndAboveMinimum()
+    public async Task CriticalStock_IncludesZeroStock_BelowMinimum_AndExactlyAtMinimum_ButNotAboveIt()
     {
+        // Межові випадки за вимогою ЛР4/ЛР5: 0, нижче мінімуму, точно на межі мінімуму, вище мінімуму.
         using var context = NewContext();
         context.AutoParts.AddRange(
             new AutoPart { Name = "Zero", Manufacturer = "QA", QuantityInStock = 0, MinimumStock = 5 },
-            new AutoPart { Name = "Critical", Manufacturer = "QA", QuantityInStock = 3, MinimumStock = 5 },
-            new AutoPart { Name = "Healthy", Manufacturer = "QA", QuantityInStock = 10, MinimumStock = 5 });
+            new AutoPart { Name = "BelowMinimum", Manufacturer = "QA", QuantityInStock = 3, MinimumStock = 5 },
+            new AutoPart { Name = "ExactlyAtMinimum", Manufacturer = "QA", QuantityInStock = 5, MinimumStock = 5 },
+            new AutoPart { Name = "AboveMinimum", Manufacturer = "QA", QuantityInStock = 10, MinimumStock = 5 });
         await context.SaveChangesAsync();
 
         var controller = new ReportsController(context);
         var result = Assert.IsType<ViewResult>(await controller.CriticalStock());
         var parts = Assert.IsAssignableFrom<List<AutoPart>>(result.Model);
-        Assert.Equal(new[] { "Critical" }, parts.Select(p => p.Name));
+        Assert.Equal(
+            new[] { "Zero", "BelowMinimum", "ExactlyAtMinimum" },
+            parts.OrderBy(p => p.QuantityInStock).Select(p => p.Name));
     }
 }

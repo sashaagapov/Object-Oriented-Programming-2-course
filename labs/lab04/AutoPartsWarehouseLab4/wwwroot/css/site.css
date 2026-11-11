@@ -235,6 +235,15 @@ main button:disabled {
   color: #9d3932;
 }
 
+.critical-stock-banner {
+  margin-top: 16px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.critical-stock-banner:hover {
+  filter: brightness(0.97);
+}
+
 .text-danger,
 .field-validation-error {
   display: block;

@@ -34,10 +34,9 @@ public class ReportsController : Controller
     }
     public async Task<IActionResult> CriticalStock()
     {
+        // Нульовий залишок теж критичний: запчастини зовсім немає на складі.
         var parts = await _context.AutoParts
-            .Where(part =>
-                part.QuantityInStock > 0 &&
-                part.QuantityInStock <= part.MinimumStock)
+            .Where(part => part.QuantityInStock <= part.MinimumStock)
             .OrderBy(part => part.QuantityInStock)
             .ToListAsync();
 
@@ -51,7 +50,7 @@ public class ReportsController : Controller
             {
                 Manufacturer = group.Key,
                 PartCount = group.Count(),
-                CriticalPartCount = group.Count(part => part.QuantityInStock > 0 && part.QuantityInStock <= part.MinimumStock)
+                CriticalPartCount = group.Count(part => part.QuantityInStock <= part.MinimumStock)
             })
             .OrderBy(item => item.Manufacturer)
             .ToListAsync();

@@ -4,7 +4,7 @@ namespace AutoPartsWarehouse.Models;
 
 public static class IdentitySeed
 {
-    public static async Task InitializeAsync(IServiceProvider services, IWebHostEnvironment environment)
+    public static async Task InitializeAsync(IServiceProvider services, IWebHostEnvironment environment, IConfiguration configuration)
     {
         using var scope = services.CreateScope();
         var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -27,7 +27,7 @@ public static class IdentitySeed
             (WarehouseRoles.WarehouseWorker, "worker@lab4.local", "LAB4_WORKER_PASSWORD", "Комірник")
         })
         {
-            var password = Environment.GetEnvironmentVariable(variable);
+            var password = configuration[variable];
             if (string.IsNullOrEmpty(password)) continue;
             var user = await users.FindByEmailAsync(email);
             if (user != null) continue;

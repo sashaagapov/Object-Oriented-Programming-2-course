@@ -29,8 +29,9 @@ public class AutoPartsController : Controller
 
         if (criticalOnly)
         {
+            // Нульовий залишок теж критичний: запчастини зовсім немає на складі.
             autoParts = autoParts.Where(part =>
-                part.QuantityInStock > 0 && part.QuantityInStock <= part.MinimumStock);
+                part.QuantityInStock <= part.MinimumStock);
         }
 
         ViewBag.Query = query;
