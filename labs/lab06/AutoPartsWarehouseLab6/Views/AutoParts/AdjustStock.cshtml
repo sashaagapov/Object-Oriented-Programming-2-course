@@ -1,0 +1,10 @@
+@model AutoPartsWarehouse.ViewModels.StockAdjustmentInput
+<h1>Інвентаризаційне коригування</h1>
+<p><strong>Запчастина:</strong> @Model.PartName · <strong>Зараз:</strong> @Model.QuantityInStock шт.</p>
+<form asp-action="AdjustStock" method="post" class="col-md-6" onsubmit="return confirm('Зберегти коригування залишку?')">
+    <input type="hidden" asp-for="AutoPartId" />
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label asp-for="Delta" class="form-label">Зміна кількості (+ або −)</label><input asp-for="Delta" type="number" class="form-control" /></div>
+    <div class="mb-3"><label asp-for="Reason" class="form-label">Причина</label><textarea asp-for="Reason" class="form-control"></textarea></div>
+    <button type="submit" class="btn btn-primary">Зберегти коригування</button>
+</form>

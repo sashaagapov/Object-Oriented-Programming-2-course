@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>AutoPartsWarehouseLab6.Benchmarks</AssemblyName>
+    <RootNamespace>AutoPartsWarehouseLab6.Benchmarks</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AutoPartsWarehouseLab6\AutoPartsWarehouseLab6.csproj" />
+  </ItemGroup>
+
+</Project>

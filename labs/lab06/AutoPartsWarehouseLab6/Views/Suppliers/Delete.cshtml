@@ -1,0 +1,11 @@
+@model AutoPartsWarehouse.Models.Supplier
+
+<h1>Видалити постачальника</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<p>Ви дійсно хочете видалити постачальника <strong>@Model.Name</strong>?</p>
+<p>Видалення неможливе, якщо з ним пов'язані замовлення.</p>
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger">Видалити</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Скасувати</a>
+</form>

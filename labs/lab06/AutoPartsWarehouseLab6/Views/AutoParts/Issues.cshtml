@@ -1,0 +1,51 @@
+@model List<AutoPartsWarehouse.Models.PartIssue>
+@{ var names = (Dictionary<string, string>)ViewBag.UserNames; }
+<h1>Історія видач</h1>
+<div class="table-responsive"><table class="table">
+    <thead><tr><th>№</th><th>Запчастина</th><th>Кількість</th><th>Створено</th><th>Оплата</th><th>Статус</th><th>Дії</th></tr></thead>
+    <tbody>
+    @foreach (var issue in Model)
+    {
+        <tr>
+            <td>@issue.Id</td><td>@issue.AutoPart.Name</td><td>@issue.Quantity</td>
+            <td>@issue.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+            <td>@(issue.IsPaymentConfirmed ? "Підтверджено" : issue.Status is PartIssueStatus.LegacyIssued or PartIssueStatus.LegacyReversed ? "Невідомо" : "Не підтверджено")</td>
+            <td>@issue.StatusLabel
+                <details><summary>Історія дій</summary>
+                    <div>Оформив: @names.GetValueOrDefault(issue.CreatedByUserId ?? "", "Історичний запис")</div>
+                    @if (issue.PaymentConfirmedAt.HasValue) { <div>Оплату підтвердив: @names.GetValueOrDefault(issue.PaymentConfirmedByUserId ?? "", "Історичний запис"), @issue.PaymentConfirmedAt.Value.ToLocalTime().ToString("g")</div> }
+                    @if (issue.IssuedAt.HasValue) { <div>Видано: @issue.IssuedAt.Value.ToLocalTime().ToString("g"), @names.GetValueOrDefault(issue.IssuedByUserId ?? "", "Історичний запис")</div> }
+                    @if (issue.CancelledAt.HasValue) { <div>Анулювання: @issue.CancelledAt.Value.ToLocalTime().ToString("g"), @names.GetValueOrDefault(issue.CancelledByUserId ?? "", "Історичний запис"), @issue.CancellationReason</div> }
+                    @if (issue.ReturnedAt.HasValue) { <div>Повернення: @issue.ReturnedAt.Value.ToLocalTime().ToString("g"), @names.GetValueOrDefault(issue.ReturnedByUserId ?? "", "Історичний запис"), @issue.ReturnReason</div> }
+                </details></td>
+            <td>
+                @if (issue.Status == PartIssueStatus.Pending)
+                {
+                    @if (User.IsInRole(WarehouseRoles.Manager) && !issue.IsPaymentConfirmed)
+                    {
+                        <form asp-action="ConfirmPayment" asp-route-id="@issue.Id" method="post" class="d-inline" onsubmit="return confirm('Підтвердити оплату?')"><button class="btn btn-sm btn-outline-primary">Підтвердити оплату</button></form>
+                    }
+                    @if (User.IsInRole(WarehouseRoles.WarehouseWorker))
+                    {
+                        @if (issue.IsPaymentConfirmed)
+                        {
+                            <form asp-action="CompleteIssue" asp-route-id="@issue.Id" method="post" class="d-inline" onsubmit="return confirm('Підтвердити фактичну видачу?')"><button class="btn btn-sm btn-primary">Видати</button></form>
+                        }
+                        <form asp-action="CancelIssue" asp-route-id="@issue.Id" method="post" class="d-inline" onsubmit="return confirm('Підтвердити анулювання?')">
+                            <input name="reason" required maxlength="500" placeholder="Причина анулювання" aria-label="Причина анулювання" />
+                            <button class="btn btn-sm btn-outline-danger">Анулювати</button>
+                        </form>
+                    }
+                }
+                @if (issue.Status == PartIssueStatus.Issued && User.IsInRole(WarehouseRoles.WarehouseWorker))
+                {
+                    <form asp-action="ReturnIssue" asp-route-id="@issue.Id" method="post" class="d-inline" onsubmit="return confirm('Підтвердити фізичне повернення?')">
+                        <input name="reason" required maxlength="500" placeholder="Причина повернення" aria-label="Причина повернення" />
+                        <button class="btn btn-sm btn-outline-secondary">Повернути</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table></div>
