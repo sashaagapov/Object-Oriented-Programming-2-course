@@ -1,0 +1,52 @@
+@model AutoPartsWarehouse.Models.PurchaseOrder
+
+<h1>Замовлення №@Model.Id</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info" role="status">@TempData["Message"]</div>
+}
+
+<p><strong>Постачальник:</strong> @Model.Supplier.Name</p>
+<p><strong>Дата:</strong> @Model.OrderDate.ToShortDateString()</p>
+<p><strong>Статус:</strong> @(Model.Status == PurchaseOrderStatus.Received ? "Отримано" : Model.Status == PurchaseOrderStatus.Cancelled ? "Анульовано" : Model.Status == PurchaseOrderStatus.Ordered ? "Замовлено" : "Створено")</p>
+@if (Model.Status == PurchaseOrderStatus.Cancelled)
+{
+    <p><strong>Причина анулювання:</strong> @Model.CancellationReason · @Model.CancelledAt?.ToLocalTime().ToString("g")</p>
+}
+
+<div class="table-responsive">
+<table class="table">
+    <thead>
+        <tr>
+            <th>Запчастина</th>
+            <th>Кількість</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.AutoPart.Name</td>
+                <td>@item.Quantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+
+@if (Model.Status is not (PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled) && User.IsInRole(WarehouseRoles.WarehouseWorker))
+{
+    <form asp-action="Receive" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Підтвердити фізичне приймання поставки?')">
+        <button type="submit" class="btn btn-primary">Прийняти поставку</button>
+    </form>
+}
+@if (Model.Status is not (PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled) && User.IsInRole(WarehouseRoles.Manager))
+{
+    <p class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="ms-3">Анулювати</a>
+    </p>
+}
+
+<a asp-action="Index">Назад до списку</a>

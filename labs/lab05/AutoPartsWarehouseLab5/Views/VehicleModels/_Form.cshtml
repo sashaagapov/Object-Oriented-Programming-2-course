@@ -1,0 +1,29 @@
+@model AutoPartsWarehouse.ViewModels.VehicleModelViewModel
+
+<form asp-action="@(Model.Id == 0 ? "Create" : "Edit")" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Brand" class="form-label">Марка</label>
+        <input asp-for="Brand" class="form-control" />
+        <span asp-validation-for="Brand" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ModelName" class="form-label">Модель</label>
+        <input asp-for="ModelName" class="form-control" />
+        <span asp-validation-for="ModelName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ProductionYear" class="form-label">Рік випуску</label>
+        <input asp-for="ProductionYear" type="number" min="1886" max="2100" class="form-control" />
+        <span asp-validation-for="ProductionYear" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SelectedAutoPartIds" class="form-label">Сумісні запчастини</label>
+        <select asp-for="SelectedAutoPartIds" asp-items="Model.AutoParts" multiple size="8" class="form-select"></select>
+        <div class="form-text">Утримуйте Command на Mac або Ctrl у Windows, щоб вибрати кілька запчастин.</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Скасувати</a>
+</form>
+

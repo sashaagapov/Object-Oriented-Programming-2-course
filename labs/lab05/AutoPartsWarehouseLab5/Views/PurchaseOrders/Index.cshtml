@@ -1,0 +1,47 @@
+@model IEnumerable<AutoPartsWarehouse.Models.PurchaseOrder>
+
+<h1>Замовлення</h1>
+
+<p class="subtitle">Створення замовлення не змінює залишки. Запчастини надходять на склад після отримання.</p>
+@if (User.IsInRole(WarehouseRoles.Manager))
+{ <p><a class="btn btn-primary" asp-action="Create">+ Створити замовлення</a></p> }
+
+<div class="table-responsive">
+<table class="table">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Дата</th>
+            <th>Постачальник</th>
+            <th>Позицій</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.OrderDate.ToShortDateString()</td>
+                <td>@order.Supplier.Name</td>
+                <td>@order.Items.Count</td>
+                <td><span class="status @(order.Status == PurchaseOrderStatus.Received ? "status-available" : "status-critical")">@(order.Status == PurchaseOrderStatus.Received ? "Отримано" : order.Status == PurchaseOrderStatus.Cancelled ? "Анульовано" : order.Status == PurchaseOrderStatus.Ordered ? "Замовлено" : "Створено")</span></td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@order.Id">Деталі</a>
+                    @if (order.Status is not (PurchaseOrderStatus.Received or PurchaseOrderStatus.Cancelled) && User.IsInRole(WarehouseRoles.Manager))
+                    {
+                        <a asp-action="Edit" asp-route-id="@order.Id" class="ms-2">Редагувати</a>
+                        <a asp-action="Delete" asp-route-id="@order.Id" class="ms-2">Анулювати</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+
+@if (!Model.Any())
+{
+    <p>Замовлень поки немає.</p>
+}

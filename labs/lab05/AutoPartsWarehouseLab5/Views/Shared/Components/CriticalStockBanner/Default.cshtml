@@ -1,0 +1,23 @@
+@model int
+@functions {
+    private static string PluralizePositions(int count)
+    {
+        var lastTwoDigits = count % 100;
+        var lastDigit = count % 10;
+        if (lastTwoDigits is >= 11 and <= 14) return "позицій";
+        return lastDigit switch
+        {
+            1 => "позиція",
+            >= 2 and <= 4 => "позиції",
+            _ => "позицій"
+        };
+    }
+}
+@if (Model > 0)
+{
+    <a asp-controller="AutoParts" asp-action="Index" asp-route-criticalOnly="true"
+       class="alert alert-warning d-flex justify-content-between align-items-center critical-stock-banner" role="alert">
+        <span>Критичні залишки: <strong>@Model</strong> @PluralizePositions(Model) потребують поповнення.</span>
+        <span>Переглянути →</span>
+    </a>
+}

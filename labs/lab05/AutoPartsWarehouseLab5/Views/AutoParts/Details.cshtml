@@ -1,0 +1,19 @@
+@model AutoPartsWarehouse.Models.AutoPart
+@{ var names = (Dictionary<string, string>)ViewBag.UserNames; }
+<h1>Деталі запчастини</h1>
+<p><strong>Назва:</strong> @Model.Name · <strong>Виробник:</strong> @Model.Manufacturer</p>
+<p><strong>На складі:</strong> @Model.QuantityInStock · <strong>Мінімум:</strong> @Model.MinimumStock</p>
+<h2>Сумісні моделі</h2>
+<ul>@foreach (var v in Model.VehicleModels) { <li>@v.Brand @v.ModelName (@v.ProductionYear)</li> }</ul>
+<h2>Історія видач</h2>
+<table class="table"><thead><tr><th>Створено</th><th>Кількість</th><th>Статус</th><th>Причина</th></tr></thead><tbody>
+@foreach (var i in Model.PartIssues.OrderByDescending(i => i.CreatedAt)) {
+<tr><td>@i.CreatedAt.ToLocalTime().ToString("g")</td><td>@i.Quantity</td><td>@i.StatusLabel</td><td>@(i.CancellationReason ?? i.ReturnReason ?? "—")</td></tr> }
+</tbody></table>
+<h2>Історія коригувань</h2>
+<table class="table"><thead><tr><th>Дата</th><th>Зміна</th><th>Було → стало</th><th>Причина</th><th>Працівник</th></tr></thead><tbody>
+@foreach (var a in Model.StockAdjustments.OrderByDescending(a => a.OccurredAt)) {
+<tr><td>@a.OccurredAt.ToLocalTime().ToString("g")</td><td>@a.Delta</td><td>@a.QuantityBefore → @a.QuantityAfter</td><td>@a.Reason</td><td>@names.GetValueOrDefault(a.PerformedByUserId, "Невідомо")</td></tr> }
+</tbody></table>
+@if (User.IsInRole(WarehouseRoles.WarehouseWorker)) { <a class="btn btn-primary" asp-action="Issue" asp-route-id="@Model.Id">Оформити видачу</a> <a class="btn btn-outline-primary" asp-action="AdjustStock" asp-route-id="@Model.Id">Коригувати залишок</a> }
+<a asp-action="Issues" class="ms-3">Усі видачі</a> <a asp-action="Index" class="ms-3">До каталогу</a>

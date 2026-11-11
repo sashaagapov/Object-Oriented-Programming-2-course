@@ -1,0 +1,6 @@
+<h1>Доступ заборонено</h1>
+<p>Для цієї дії потрібна інша роль.</p>
+@if (User.IsInRole(WarehouseRoles.Administrator))
+{ <a asp-controller="Admin" asp-action="Index">До користувачів</a> }
+else
+{ <a asp-controller="AutoParts" asp-action="Index">До каталогу</a> }
