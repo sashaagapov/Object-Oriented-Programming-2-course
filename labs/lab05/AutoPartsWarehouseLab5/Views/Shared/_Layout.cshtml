@@ -38,6 +38,7 @@
                     }
                     @if (User.IsInRole(WarehouseRoles.Manager))
                     {
+                        <a class="nav-link" asp-controller="AutoParts" asp-action="Notices">Повідомлення</a>
                         <a class="nav-link" asp-controller="Suppliers" asp-action="Index">Постачальники</a>
                         <a class="nav-link" asp-controller="Reports" asp-action="Index">Звіти</a>
                     }

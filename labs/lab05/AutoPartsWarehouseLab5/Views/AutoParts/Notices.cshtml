@@ -1,0 +1,40 @@
+@model List<AutoPartsWarehouse.Models.CriticalStockNotice>
+@{ var names = (Dictionary<string, string>)ViewBag.UserNames; }
+<h1>Повідомлення комірників про критичний залишок</h1>
+<div class="table-responsive"><table class="table">
+    <thead><tr><th>Запчастина</th><th>Залишок на момент повідомлення</th><th>Повідомив</th><th>Коли</th><th>Стан</th><th>Дії</th></tr></thead>
+    <tbody>
+    @foreach (var notice in Model)
+    {
+        <tr>
+            <td>@notice.AutoPart.Name (@notice.AutoPart.Manufacturer)</td>
+            <td>@notice.QuantityAtNotice</td>
+            <td>@names.GetValueOrDefault(notice.NotifiedByUserId, "Невідомо")</td>
+            <td>@notice.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+            <td>
+                @if (notice.AcknowledgedAt.HasValue)
+                {
+                    <span>Опрацьовано @notice.AcknowledgedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"), @names.GetValueOrDefault(notice.AcknowledgedByUserId ?? "", "Невідомо")</span>
+                }
+                else
+                {
+                    <span class="status status-critical">Очікує</span>
+                }
+            </td>
+            <td>
+                @if (!notice.AcknowledgedAt.HasValue)
+                {
+                    <a asp-controller="PurchaseOrders" asp-action="Create" asp-route-autoPartId="@notice.AutoPartId">Замовити</a>
+                    <form asp-action="AcknowledgeNotice" asp-route-id="@notice.Id" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-outline-primary">Позначити опрацьованим</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table></div>
+@if (!Model.Any())
+{
+    <p class="empty-state">Нових повідомлень від комірників немає.</p>
+}

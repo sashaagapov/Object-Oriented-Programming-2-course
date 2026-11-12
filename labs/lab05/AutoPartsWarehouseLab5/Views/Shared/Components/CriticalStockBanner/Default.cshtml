@@ -21,3 +21,11 @@
         <span>Переглянути →</span>
     </a>
 }
+@if (ViewData["OpenNotices"] is int openNotices && openNotices > 0)
+{
+    <a asp-controller="AutoParts" asp-action="Notices"
+       class="alert alert-info d-flex justify-content-between align-items-center" role="alert">
+        <span>Комірники повідомили про критичний залишок: <strong>@openNotices</strong> нових.</span>
+        <span>Відкрити →</span>
+    </a>
+}

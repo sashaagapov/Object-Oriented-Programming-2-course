@@ -14,9 +14,12 @@
     {
         <input type="hidden" name="criticalOnly" value="true" />
     }
-    <label for="query">Пошук за назвою або виробником</label>
+    <label for="query">Пошук за назвою або виробником і перевірка сумісності з моделлю авто</label>
     <div class="search-controls">
     <input id="query" name="query" value="@ViewBag.Query" placeholder="Наприклад, фільтр або Bosch" />
+    <select id="vehicleModelId" name="vehicleModelId" asp-items="(SelectList)ViewBag.VehicleModels" aria-label="Сумісність з моделлю авто">
+        <option value="">Усі моделі авто</option>
+    </select>
     <button type="submit">Знайти</button>
     <a asp-action="Index">Скинути</a>
     </div>
@@ -31,6 +34,7 @@
             <th>Кількість</th>
             <th>Мінімальний залишок</th>
             <th>Стан</th>
+            <th>Сумісні моделі авто</th>
             <th>Дії</th>
         </tr>
     </thead>
@@ -58,10 +62,24 @@
                     }
                 </td>
                 <td>
+                    @if (part.VehicleModels.Any())
+                    {
+                        @string.Join(", ", part.VehicleModels.OrderBy(v => v.Brand).ThenBy(v => v.ModelName).Select(v => $"{v.Brand} {v.ModelName}"))
+                    }
+                    else
+                    {
+                        <span class="text-muted">Не вказано</span>
+                    }
+                </td>
+                <td>
                     <div class="actions">
                     <a asp-action="Details" asp-route-id="@part.Id">Деталі</a>
                     @if (User.IsInRole(WarehouseRoles.Manager))
                     {
+                        @if (part.QuantityInStock <= part.MinimumStock)
+                        {
+                            <a asp-controller="PurchaseOrders" asp-action="Create" asp-route-autoPartId="@part.Id">Замовити</a>
+                        }
                         <a asp-action="Edit" asp-route-id="@part.Id">Редагувати</a>
                         <a asp-action="Delete" asp-route-id="@part.Id">Видалити</a>
                     }
@@ -69,6 +87,19 @@
                     {
                         <a asp-action="Issue" asp-route-id="@part.Id">Оформити видачу</a>
                         <a asp-action="AdjustStock" asp-route-id="@part.Id">Коригувати</a>
+                        @if (part.QuantityInStock <= part.MinimumStock)
+                        {
+                            @if (((HashSet<int>)ViewBag.NotifiedPartIds).Contains(part.Id))
+                            {
+                                <span class="text-muted">Менеджера повідомлено</span>
+                            }
+                            else
+                            {
+                                <form asp-action="NotifyManager" asp-route-id="@part.Id" method="post" class="d-inline">
+                                    <button class="btn btn-sm btn-outline-warning">Повідомити менеджера</button>
+                                </form>
+                            }
+                        }
                     }
                     </div>
                 </td>

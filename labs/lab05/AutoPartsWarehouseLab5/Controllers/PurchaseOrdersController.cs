@@ -47,13 +47,16 @@ public class PurchaseOrdersController : Controller
 
     [HttpGet]
     [Authorize(Roles = WarehouseRoles.Manager)]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(int? autoPartId = null)
     {
+        var prefilled = autoPartId.HasValue && await _context.AutoParts.AnyAsync(part => part.Id == autoPartId.Value)
+            ? new PurchaseOrderItemInput { AutoPartId = autoPartId }
+            : new PurchaseOrderItemInput();
         var model = new CreatePurchaseOrderViewModel
         {
             Items = new List<PurchaseOrderItemInput>
             {
-                new(), new()
+                prefilled, new()
             }
         };
         await FillChoices(model);

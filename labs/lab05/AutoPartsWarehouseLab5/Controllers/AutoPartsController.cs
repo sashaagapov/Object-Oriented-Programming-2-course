@@ -1,6 +1,7 @@
 using AutoPartsWarehouse.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsWarehouse.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +17,15 @@ public class AutoPartsController : Controller
     {
         _context = context;
     }
-    public async Task<IActionResult> Index(string? query, bool criticalOnly = false)
+    public async Task<IActionResult> Index(string? query, bool criticalOnly = false, int? vehicleModelId = null)
     {
-        var autoParts = _context.AutoParts.AsQueryable();
+        var autoParts = _context.AutoParts.Include(part => part.VehicleModels).AsQueryable();
+
+        if (vehicleModelId.HasValue)
+        {
+            autoParts = autoParts.Where(part =>
+                part.VehicleModels.Any(vehicle => vehicle.Id == vehicleModelId.Value));
+        }
 
         if (!string.IsNullOrWhiteSpace(query))
         {
@@ -36,6 +43,16 @@ public class AutoPartsController : Controller
 
         ViewBag.Query = query;
         ViewBag.CriticalOnly = criticalOnly;
+        ViewBag.VehicleModelId = vehicleModelId;
+        ViewBag.NotifiedPartIds = (await _context.CriticalStockNotices
+            .Where(notice => notice.AcknowledgedAt == null)
+            .Select(notice => notice.AutoPartId)
+            .ToListAsync()).ToHashSet();
+        ViewBag.VehicleModels = new SelectList(
+            await _context.VehicleModels.OrderBy(vehicle => vehicle.Brand).ThenBy(vehicle => vehicle.ModelName)
+                .Select(vehicle => new { vehicle.Id, Title = vehicle.Brand + " " + vehicle.ModelName + " (" + vehicle.ProductionYear + ")" })
+                .ToListAsync(),
+            "Id", "Title", vehicleModelId);
         return View(await autoParts.OrderBy(part => part.Name).ToListAsync());
     }
     [HttpGet]
@@ -259,6 +276,81 @@ public class AutoPartsController : Controller
         await _context.SaveChangesAsync();
         TempData["Success"] = "Майбутню видачу оформлено. Залишок не змінено.";
         return RedirectToAction(nameof(Issues));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = WarehouseRoles.WarehouseWorker)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> NotifyManager(int id)
+    {
+        var part = await _context.AutoParts.FindAsync(id);
+        if (part == null) return NotFound();
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+
+        if (part.QuantityInStock > part.MinimumStock)
+        {
+            TempData["Error"] = "Повідомляти менеджера можна лише про запчастину з критичним залишком.";
+            return RedirectToAction(nameof(Index));
+        }
+        if (await _context.CriticalStockNotices.AnyAsync(notice => notice.AutoPartId == id && notice.AcknowledgedAt == null))
+        {
+            TempData["Error"] = "Менеджера вже повідомлено про цю запчастину.";
+            return RedirectToAction(nameof(Index), new { criticalOnly = true });
+        }
+
+        _context.CriticalStockNotices.Add(new CriticalStockNotice
+        {
+            AutoPartId = id,
+            QuantityAtNotice = part.QuantityInStock,
+            CreatedAt = DateTime.UtcNow,
+            NotifiedByUserId = actor
+        });
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            TempData["Error"] = "Менеджера вже повідомлено про цю запчастину.";
+            return RedirectToAction(nameof(Index), new { criticalOnly = true });
+        }
+        TempData["Success"] = "Менеджера повідомлено про критичний залишок.";
+        return RedirectToAction(nameof(Index), new { criticalOnly = true });
+    }
+
+    [Authorize(Roles = WarehouseRoles.Manager)]
+    public async Task<IActionResult> Notices()
+    {
+        ViewBag.UserNames = await _context.Users.ToDictionaryAsync(user => user.Id, user => user.DisplayName);
+        var notices = await _context.CriticalStockNotices
+            .Include(notice => notice.AutoPart)
+            .OrderBy(notice => notice.AcknowledgedAt != null)
+            .ThenByDescending(notice => notice.CreatedAt)
+            .Take(100)
+            .ToListAsync();
+        return View(notices);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = WarehouseRoles.Manager)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AcknowledgeNotice(int id)
+    {
+        var notice = await _context.CriticalStockNotices.FindAsync(id);
+        if (notice == null) return NotFound();
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (actor == null) return Forbid();
+        if (notice.AcknowledgedAt != null)
+        {
+            TempData["Error"] = "Це повідомлення вже опрацьовано.";
+            return RedirectToAction(nameof(Notices));
+        }
+        notice.AcknowledgedAt = DateTime.UtcNow;
+        notice.AcknowledgedByUserId = actor;
+        await _context.SaveChangesAsync();
+        TempData["Success"] = "Повідомлення позначено як опрацьоване.";
+        return RedirectToAction(nameof(Notices));
     }
 
     [HttpPost]

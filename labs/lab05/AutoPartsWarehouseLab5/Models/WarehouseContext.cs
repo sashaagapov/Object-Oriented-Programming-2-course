@@ -17,6 +17,7 @@ public class WarehouseContext : IdentityDbContext<ApplicationUser>
     public DbSet<VehicleModel> VehicleModels { get; set; }
     public DbSet<PartIssue> PartIssues { get; set; }
     public DbSet<StockAdjustment> StockAdjustments { get; set; }
+    public DbSet<CriticalStockNotice> CriticalStockNotices { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,5 +56,21 @@ public class WarehouseContext : IdentityDbContext<ApplicationUser>
             .WithMany()
             .HasForeignKey(adjustment => adjustment.PerformedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CriticalStockNotice>()
+            .HasOne(notice => notice.AutoPart)
+            .WithMany()
+            .HasForeignKey(notice => notice.AutoPartId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<CriticalStockNotice>()
+            .HasOne(notice => notice.NotifiedByUser)
+            .WithMany()
+            .HasForeignKey(notice => notice.NotifiedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+        // Не більше одного неопрацьованого повідомлення на запчастину — гарантує сама БД.
+        modelBuilder.Entity<CriticalStockNotice>()
+            .HasIndex(notice => notice.AutoPartId)
+            .IsUnique()
+            .HasFilter("\"AcknowledgedAt\" IS NULL");
     }
 }

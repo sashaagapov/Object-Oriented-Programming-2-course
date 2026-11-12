@@ -130,6 +130,42 @@ namespace AutoPartsWarehouse.Migrations
                     b.ToTable("AutoParts");
                 });
 
+            modelBuilder.Entity("AutoPartsWarehouse.Models.CriticalStockNotice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("AcknowledgedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AcknowledgedByUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AutoPartId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NotifiedByUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("QuantityAtNotice")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AutoPartId")
+                        .IsUnique()
+                        .HasFilter("\"AcknowledgedAt\" IS NULL");
+
+                    b.HasIndex("NotifiedByUserId");
+
+                    b.ToTable("CriticalStockNotices");
+                });
+
             modelBuilder.Entity("AutoPartsWarehouse.Models.PartIssue", b =>
                 {
                     b.Property<int>("Id")
@@ -469,6 +505,25 @@ namespace AutoPartsWarehouse.Migrations
                         .HasForeignKey("VehicleModelsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AutoPartsWarehouse.Models.CriticalStockNotice", b =>
+                {
+                    b.HasOne("AutoPartsWarehouse.Models.AutoPart", "AutoPart")
+                        .WithMany()
+                        .HasForeignKey("AutoPartId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AutoPartsWarehouse.Models.ApplicationUser", "NotifiedByUser")
+                        .WithMany()
+                        .HasForeignKey("NotifiedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AutoPart");
+
+                    b.Navigation("NotifiedByUser");
                 });
 
             modelBuilder.Entity("AutoPartsWarehouse.Models.PartIssue", b =>

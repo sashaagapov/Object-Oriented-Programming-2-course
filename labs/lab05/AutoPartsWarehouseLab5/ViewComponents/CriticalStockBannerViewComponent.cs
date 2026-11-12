@@ -23,6 +23,8 @@ public class CriticalStockBannerViewComponent : ViewComponent
     {
         var criticalCount = await _context.AutoParts
             .CountAsync(part => part.QuantityInStock <= part.MinimumStock);
+        ViewData["OpenNotices"] = await _context.CriticalStockNotices
+            .CountAsync(notice => notice.AcknowledgedAt == null);
         return View(criticalCount);
     }
 }
