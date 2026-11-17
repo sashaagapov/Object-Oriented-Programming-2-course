@@ -2,9 +2,18 @@
 
 Coursework on an auto-parts warehouse: UML models for the domain and an ASP.NET Core MVC application that manages parts, suppliers, purchase orders, and stock issues.
 
+**Coursework** · C# / .NET 8 · ASP.NET Core MVC · EF Core · SQLite
+
+The application supports part search, critical-stock filtering, purchase orders, receiving deliveries, and issuing stock. The coursework also includes four UML models of the warehouse domain.
+
+[Application overview](#what-the-application-does) · [Coursework files](#coursework-and-files) · [Run locally](#run-lab-2) · [Domain diagrams](#domain-model)
+
 ## Domain model
 
 The warehouse is modelled in four UML diagrams drawn in diagrams.net. Each PNG below is exported from the `.drawio` file next to it in [`diagrams/`](diagrams/); the diagram text is in Ukrainian.
+
+<details>
+<summary>View the four UML diagrams</summary>
 
 ![UML class diagram of the auto-parts warehouse: warehouse, parts, suppliers, orders, vehicle models, and employees](diagrams/auto_parts_warehouse_classes.png)
 
@@ -18,6 +27,8 @@ The warehouse is modelled in four UML diagrams drawn in diagrams.net. Each PNG b
 | --- | --- |
 | ![UML activity diagram of searching for and issuing a part](diagrams/auto_parts_warehouse_activity.png) | ![UML state diagram: in stock, critical stock, out of stock](diagrams/auto_parts_warehouse_state.png) |
 | *Activity: search for a part, check the quantity, issue it, then warn the manager if stock became critical.* | *States: in stock, critical stock (`0 < quantity <= minimum`), and out of stock. Issuing and replenishing move a part between them.* |
+
+</details>
 
 ## What the application does
 
