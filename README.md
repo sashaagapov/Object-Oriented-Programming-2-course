@@ -2,9 +2,18 @@
 
 Coursework on an auto-parts warehouse: UML models for the domain and an ASP.NET Core MVC application that manages parts, suppliers, purchase orders, and stock issues.
 
+**Coursework** · C# / .NET 8 · ASP.NET Core MVC · EF Core · SQLite
+
+The application supports part search, critical-stock filtering, purchase orders, receiving deliveries, and issuing stock. The coursework also includes four UML models of the warehouse domain.
+
+[Application overview](#what-the-application-does) · [Coursework files](#coursework-and-files) · [Run locally](#run-lab-2) · [Domain diagrams](#domain-model)
+
 ## Domain model
 
 The warehouse is modelled in four UML diagrams drawn in diagrams.net. Each PNG below is exported from the `.drawio` file next to it in [`diagrams/`](diagrams/); the diagram text is in Ukrainian.
+
+<details>
+<summary>View the four UML diagrams</summary>
 
 ![UML class diagram of the auto-parts warehouse: warehouse, parts, suppliers, orders, vehicle models, and employees](diagrams/auto_parts_warehouse_classes.png)
 
@@ -19,6 +28,8 @@ The warehouse is modelled in four UML diagrams drawn in diagrams.net. Each PNG b
 | ![UML activity diagram of searching for and issuing a part](diagrams/auto_parts_warehouse_activity.png) | ![UML state diagram: in stock, critical stock, out of stock](diagrams/auto_parts_warehouse_state.png) |
 | *Activity: search for a part, check the quantity, issue it, then warn the manager if stock became critical.* | *States: in stock, critical stock (`0 < quantity <= minimum`), and out of stock. Issuing and replenishing move a part between them.* |
 
+</details>
+
 ## What the application does
 
 The [Lab 2 application](labs/lab02/AutoPartsWarehouse/AutoPartsWarehouse.csproj) opens on the parts list. You can search by part name or manufacturer, inspect a part and its compatible vehicle models, add or edit parts, and filter for critical stock. The filter includes parts with `0 < QuantityInStock <= MinimumStock`; out-of-stock parts are excluded.
@@ -31,6 +42,10 @@ The [Lab 2 report](labs/lab02/%D0%9B%D0%A0_2_%D0%9E%D0%9E%D0%9F_%D0%90%D0%B3%D0%
 | --- | --- | --- |
 | Lab 1 — warehouse modelling | [Lab 1 report](labs/lab01/%D0%9B%D0%A0_1_%D0%9E%D0%9E%D0%9F_%D0%90%D0%B3%D0%B0%D0%BF%D0%BE%D0%B2.docx) | The domain is described through the [class](diagrams/auto_parts_warehouse_classes.drawio), [use-case](diagrams/auto_parts_warehouse_use_case.drawio), [activity](diagrams/auto_parts_warehouse_activity.drawio), and [state](diagrams/auto_parts_warehouse_state.drawio) diagrams. Open the `.drawio` files in diagrams.net; PNG exports are shown [above](#domain-model). |
 | Lab 2 — MVC warehouse | [Application](labs/lab02/AutoPartsWarehouse/AutoPartsWarehouse.csproj), [lab report](labs/lab02/%D0%9B%D0%A0_2_%D0%9E%D0%9E%D0%9F_%D0%90%D0%B3%D0%B0%D0%BF%D0%BE%D0%B2.docx) and [MVC assignment](labs/lab02/%D0%9B%D0%A0_2_MVC.docx) | C# / .NET 8 application with Razor views, Entity Framework Core 8, SQLite, and migrations. It supports part management, supplier creation, multi-item purchase orders, receiving deliveries, and issuing stock after payment confirmation. |
+| Lab 3 — validation and reports | [Application](labs/lab03/AutoPartsWarehouseLab3/) · [lab report](labs/lab03/%D0%9B%D0%A03_%D0%90%D0%B3%D0%B0%D0%BF%D0%BE%D0%B2_%D0%86%D0%9F%D0%97-21.docx) | Extends the warehouse application with validation and reports. |
+| Lab 4 — roles and stock | [Application](labs/lab04/AutoPartsWarehouseLab4/) · [tests](labs/lab04/AutoPartsWarehouseLab4.Tests/) | Adds identity roles, stock adjustments, issue tracking, and tests. |
+| Lab 5 — transactions | [Lab guide](labs/lab05/README.md) · [tests](labs/lab05/AutoPartsWarehouseLab5.Tests/) | Coursework on validation, transactions, isolation, and roles; see the guide for its lab 4 dependency. |
+| Lab 6 — parallel queries | [Lab guide](labs/lab06/README.md) · [benchmark project](labs/lab06/AutoPartsWarehouseLab6.Benchmarks/) | Compares sequential and parallel query approaches using generated SQLite data. |
 | Cover sheet | [Course cover sheet](docs/%D0%A2%D0%B8%D1%82%D1%83%D0%BB-%D0%BE%D0%BE%D0%BF.docx) | Document supplied with the coursework. |
 
 The reports and application interface are in Ukrainian. The repository has no seeded warehouse database; use the steps below to create a local database and try the workflows.
